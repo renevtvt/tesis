@@ -1,0 +1,251 @@
+import csv
+from django.views.generic import TemplateView, FormView, ListView, UpdateView
+from django.urls import reverse_lazy
+from django.contrib import messages
+from django.db import transaction, IntegrityError
+from io import StringIO
+from .forms import *
+from .models import Infra, Filiales, Servicios, Unidades
+from .utils import *
+
+
+# Vista que carga la página de inicio
+class InicioView(TemplateView):
+    """vista que carga la pagina de inicio"""
+    template_name="inicio.html"
+
+# Vista que carga el csv de Infra
+class cargaCsvInfra(FormView):
+    template_name = "infra/carga_infra.html"
+    form_class = InfraUploadForm
+    success_url = reverse_lazy("infra_app:carga_infra")
+    
+    def form_valid(self, form):
+        # función para el manejo de errores
+
+        file = form.cleaned_data["file"]
+        csv_file = StringIO(file.read().decode("utf-8"))
+        reader = csv.reader(csv_file, delimiter=";")
+        # Saltar la cabecera
+        next(reader) 
+        
+        data = []
+
+        for row in reader:
+            try:
+                # validaciones INT
+                id_filial_csv = parse_int(row[0], "id_filial")
+                id_unidad_csv = parse_int(row[5], "id_unidad")
+                ejercicio_csv = parse_int(row[1], "ejercicio")
+                mes_csv = parse_int(row[2], "mes")
+                validar_mes(mes_csv)
+                dia_csv = parse_int(row[3], "dia")
+                validar_dia(dia_csv)
+                hora_csv = parse_int(row[4], "hora")
+                validar_hora(hora_csv)
+                disponible_csv = parse_int(row[6], "disponible")
+                habilitado_csv = parse_int(row[7], "habilitado")
+                instalado_csv = parse_int(row[8], "instalado")
+
+                # validación de negocio
+                if disponible_csv > habilitado_csv:
+                    raise ValueError(f"Error en la fila {reader.line_num}: Infraestructura disponible no puede ser mayor que infraestructura habilitada")
+                if habilitado_csv > instalado_csv:
+                    raise ValueError(f"Error en la fila {reader.line_num}: Infraestructura habilitada no puede ser mayor que infraestructura instalada")
+                
+                infra_instance = Infra(
+                    # en esta linea se puede gatillar la excepción de que id filial no existe
+                    id_filial= Filiales.objects.get(id_filial=id_filial_csv),  #filial_instance
+                    ejercicio=ejercicio_csv,
+                    mes=mes_csv,
+                    dia=dia_csv,
+                    hora=hora_csv,
+                    # en esta linea se puede gatillar la excepción de que id unidad no existe
+                    id_unidad= Unidades.objects.get(id_unidad=id_unidad_csv),  #unidad_instance
+                    disponible=disponible_csv,
+                    habilitado=habilitado_csv,
+                    instalado=instalado_csv
+                )
+                
+                data.append(infra_instance)
+
+            except IndexError:
+                return msg_error(self.request, self, form, "El número de columnas del archivo csv no es válido")          
+            except Filiales.DoesNotExist:
+                return msg_error(self.request, self, form, f"Error en la fila {reader.line_num}: El id_filial ingresado no existe")  
+            except Unidades.DoesNotExist:
+                return msg_error(self.request, self, form, f"Error en la fila {reader.line_num}: El id_unidad ingresado no existe")  
+            except Exception as e:
+                return msg_error(self.request, self, form, f"Error en la fila {reader.line_num}: La carga ha presentado un error: {e}")            
+        
+        # Inserción a la base de datos
+        try:
+            with transaction.atomic():                      
+                Infra.objects.bulk_create(data)
+            messages.success(self.request, "Archivo cargado correctamente en la base de datos")    
+        except IntegrityError as e:
+             mensaje = str(e.__cause__)
+             index_msg = str(e.__cause__).find(":")
+             return msg_error(self.request, self, form, f"Registro duplicado: {mensaje[index_msg+2:].strip()}")      
+       
+        return super().form_valid(form)
+    
+# Vista para cargar el CSV de servicios    
+class cargaCsvServicios(FormView):
+    template_name = "infra/carga_servicios.html"
+    form_class = InfraUploadForm
+    success_url = reverse_lazy("infra_app:carga_servicios")
+    
+    def form_valid(self, form):
+        file = form.cleaned_data["file"]
+        csv_file = StringIO(file.read().decode("utf-8"))
+        reader = csv.reader(csv_file, delimiter=";")
+        # Saltar la cabecera
+        next(reader)
+        
+        data = []
+
+        for row in reader:
+            try:
+                id_servicio_csv = parse_int(row[0], "id_servicio")
+                servicio_instance = Servicios(
+                    id_servicio=id_servicio_csv,
+                    nombre_servicio=row[1].strip(),
+                )
+                data.append(servicio_instance)           
+                                                   
+            except IndexError:
+                return msg_error(self.request, self, form, "El número de columnas del archivo csv no es válido")
+            except Exception as e:
+                return msg_error(self.request, self, form, f"Error en la fila {reader.line_num}: {e}")
+            
+        try:                  
+            Servicios.objects.bulk_create(data)
+            messages.success(self.request, "Archivo cargado correctamente en la base de datos")
+        except IntegrityError as e:
+             mensaje = str(e.__cause__)
+             index_msg = str(e.__cause__).find(":")
+             return msg_error(self.request, self, form, f"Llave duplicada: {mensaje[index_msg+2:].strip()}")     
+ 
+        return super().form_valid(form)
+
+# Vista para cargar el CSV de unidades 
+class cargaCsvUnidades(FormView):
+    template_name = "infra/carga_unidades.html"
+    form_class = UnidadesUploadForm
+    success_url = reverse_lazy("infra_app:carga_unidades")
+    
+    def form_valid(self, form):
+
+        file = form.cleaned_data["file"]
+        csv_file = StringIO(file.read().decode("utf-8"))
+        reader = csv.reader(csv_file, delimiter=";")
+        # Saltar la cabecera
+        next(reader)
+        
+        data = []
+
+        for row in reader:
+            try:
+                id_unidad_csv = parse_int(row[0], "id_unidad")
+                # Validar si la id_servicio existe en el modelo servicios
+                id_servicio_csv = parse_int(row[2], "id_servicio")
+                id_servicio_instance = Servicios.objects.get(id_servicio=id_servicio_csv)
+                # Genero instancia de unidad
+                unidad_instance = Unidades(
+                    id_unidad=id_unidad_csv,
+                    nombre_unidad=row[1].strip(),
+                    id_servicio=id_servicio_instance
+                )
+                data.append(unidad_instance)           
+                                                   
+            except Servicios.DoesNotExist:
+                return msg_error(self.request, self, form, f"Error en la fila {reader.line_num}: El id_servicio ingresado no existe")
+            except IndexError:
+                return msg_error(self.request, self, form, "El número de columnas del archivo csv no es válido")
+            except Exception as e:
+                return msg_error(self.request, self, form, f"Error en la fila {reader.line_num}: {e}")
+
+        try:                  
+            Unidades.objects.bulk_create(data)
+            messages.success(self.request, "Archivo cargado correctamente en la base de datos")
+        except IntegrityError as e:
+             mensaje = str(e.__cause__)
+             index_msg = str(e.__cause__).find(":")
+             return msg_error(self.request, self, form, f"Llave duplicada: {mensaje[index_msg+2:].strip()}")     
+ 
+        return super().form_valid(form)
+
+class cargaCsvActividad(FormView):
+    template_name = "infra/carga_actividad.html"
+    form_class = UnidadesUploadForm
+    success_url = reverse_lazy("infra_app:carga_actividad")
+    
+    def form_valid(self, form):
+
+        file = form.cleaned_data["file"]
+        csv_file = StringIO(file.read().decode("utf-8"))
+        reader = csv.reader(csv_file, delimiter=";")
+        # Saltar la cabecera
+        next(reader)
+        
+        data = []
+
+        for row in reader:
+            try:
+                id_unidad_csv = parse_int(row[0], "id_unidad")
+                # Validar si la id_servicio existe en el modelo servicios
+                id_servicio_csv = parse_int(row[2], "id_servicio")
+                id_servicio_instance = Servicios.objects.get(id_servicio=id_servicio_csv)
+                # Genero instancia de unidad
+                unidad_instance = Unidades(
+                    id_unidad=id_unidad_csv,
+                    nombre_unidad=row[1].strip(),
+                    id_servicio=id_servicio_instance
+                )
+                data.append(unidad_instance)           
+                                                   
+            except Servicios.DoesNotExist:
+                return msg_error(self.request, self, form, f"Error en la fila {reader.line_num}: El id_servicio ingresado no existe")
+            except IndexError:
+                return msg_error(self.request, self, form, "El número de columnas del archivo csv no es válido")
+            except Exception as e:
+                return msg_error(self.request, self, form, f"Error en la fila {reader.line_num}: {e}")
+
+        try:                  
+            Unidades.objects.bulk_create(data)
+            messages.success(self.request, "Archivo cargado correctamente en la base de datos")
+        except IntegrityError as e:
+             mensaje = str(e.__cause__)
+             index_msg = str(e.__cause__).find(":")
+             return msg_error(self.request, self, form, f"Llave duplicada: {mensaje[index_msg+2:].strip()}")     
+ 
+        return super().form_valid(form)        
+    
+class ServiciosListView(ListView):
+    model = Servicios
+    template_name = "infra/lista_servicios.html"
+    context_object_name = "servicios"
+
+
+class ServiciosUpdateView(UpdateView):
+    model = Servicios
+    form_class = ServiciosForm
+    template_name = 'infra/modificar_servicios.html'
+    success_url = reverse_lazy('servicios_list')
+
+
+        
+    
+
+
+    
+
+
+       
+
+
+
+
+
+

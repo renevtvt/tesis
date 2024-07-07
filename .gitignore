@@ -1,0 +1,8 @@
+# secret key
+mantenedor/secret.json
+#varios
+entorno/
+.vscode/
+__pycache__/
+*.pyc
+
