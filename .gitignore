@@ -5,4 +5,5 @@ entorno/
 .vscode/
 __pycache__/
 *.pyc
+iniciar.ps1
 

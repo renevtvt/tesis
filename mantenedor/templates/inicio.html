@@ -9,6 +9,14 @@
     <link rel="stylesheet" href="{% static 'css/foundation.min.css' %}">
 </head>
 <body>
-    <h1>Mantenedor de Infraestructura</h1>
+    <h1>Bienvenido al mantenedor de Infraestructura Red Salud</h1>
+    <nav>
+        <ul>
+            <li><a href="{% url 'infra_app:carga_infra' %}">Cargar Infraestructura</a></li>
+            <li><a href="{% url 'infra_app:carga_servicios' %}">Cargar Servicios</a></li>
+            <li><a href="{% url 'infra_app:carga_unidades' %}">Cargar Unidades</a></li>
+            <li><a href="{% url 'infra_app:carga_actividad' %}">Cargar Actividad</a></li>
+        </ul>
+    </nav>
 </body>
 </html>

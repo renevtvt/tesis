@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.db import transaction, IntegrityError
 from io import StringIO
 from .forms import *
-from .models import Infra, Filiales, Servicios, Unidades
+from .models import Infra, Filiales, Servicios, Unidades, Actividad
 from .utils import *
 
 
@@ -148,14 +148,12 @@ class cargaCsvUnidades(FormView):
         for row in reader:
             try:
                 id_unidad_csv = parse_int(row[0], "id_unidad")
-                # Validar si la id_servicio existe en el modelo servicios
                 id_servicio_csv = parse_int(row[2], "id_servicio")
-                id_servicio_instance = Servicios.objects.get(id_servicio=id_servicio_csv)
                 # Genero instancia de unidad
                 unidad_instance = Unidades(
                     id_unidad=id_unidad_csv,
                     nombre_unidad=row[1].strip(),
-                    id_servicio=id_servicio_instance
+                    id_servicio=Servicios.objects.get(id_servicio=id_servicio_csv)
                 )
                 data.append(unidad_instance)           
                                                    
@@ -193,32 +191,38 @@ class cargaCsvActividad(FormView):
 
         for row in reader:
             try:
-                id_unidad_csv = parse_int(row[0], "id_unidad")
-                # Validar si la id_servicio existe en el modelo servicios
-                id_servicio_csv = parse_int(row[2], "id_servicio")
-                id_servicio_instance = Servicios.objects.get(id_servicio=id_servicio_csv)
-                # Genero instancia de unidad
-                unidad_instance = Unidades(
-                    id_unidad=id_unidad_csv,
-                    nombre_unidad=row[1].strip(),
-                    id_servicio=id_servicio_instance
+                id_filial_csv = parse_int(row[0], "id_filial")
+                ejercicio_csv = parse_int(row[1], "ejercicio")
+                mes_csv = parse_int(row[2], "mes")
+                validar_mes(mes_csv)
+                id_unidad_csv = parse_int(row[3], "id_unidad")
+                cantidad_csv = parse_int(row[4], "actividad")
+                
+                actividad_instance = Actividad(
+                    id_filial=Filiales.objects.get(id_filial=id_filial_csv),
+                    ejercicio=ejercicio_csv,
+                    mes=mes_csv,
+                    id_unidad=Unidades.objects.get(id_unidad=id_unidad_csv),
+                    cantidad=cantidad_csv
                 )
-                data.append(unidad_instance)           
+                data.append(actividad_instance)           
                                                    
-            except Servicios.DoesNotExist:
-                return msg_error(self.request, self, form, f"Error en la fila {reader.line_num}: El id_servicio ingresado no existe")
+            except Filiales.DoesNotExist:
+                return msg_error(self.request, self, form, f"Error en la fila {reader.line_num}: El id_filial ingresado no existe")
+            except Unidades.DoesNotExist:
+                return msg_error(self.request, self, form, f"Error en la fila {reader.line_num}: El id_unidad ingresado no existe")
             except IndexError:
                 return msg_error(self.request, self, form, "El número de columnas del archivo csv no es válido")
             except Exception as e:
                 return msg_error(self.request, self, form, f"Error en la fila {reader.line_num}: {e}")
 
         try:                  
-            Unidades.objects.bulk_create(data)
+            Actividad.objects.bulk_create(data)
             messages.success(self.request, "Archivo cargado correctamente en la base de datos")
         except IntegrityError as e:
              mensaje = str(e.__cause__)
              index_msg = str(e.__cause__).find(":")
-             return msg_error(self.request, self, form, f"Llave duplicada: {mensaje[index_msg+2:].strip()}")     
+             return msg_error(self.request, self, form, f"Registro duplicado: {mensaje[index_msg+2:].strip()}")     
  
         return super().form_valid(form)        
     
