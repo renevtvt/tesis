@@ -1,22 +1,19 @@
-{% load static %}
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{% static 'css/foundation.min.css' %}">
-</head>
-<body>
-    <h1>Bienvenido al mantenedor de Infraestructura Red Salud</h1>
+{% block titulo %} Red ChileSalud {% endblock titulo %}
+
+{% block content %}
+
+    <h1>Bienvenido a la gestión de Infraestructura y actividad Clínicas ChileSalud</h1>
     <nav>
         <ul>
             <li><a href="{% url 'infra_app:carga_infra' %}">Cargar Infraestructura</a></li>
+            <li><a href="{% url 'infra_app:delete_infra' %}">Borrar Infraestructura</a></li>
             <li><a href="{% url 'infra_app:carga_servicios' %}">Cargar Servicios</a></li>
             <li><a href="{% url 'infra_app:carga_unidades' %}">Cargar Unidades</a></li>
             <li><a href="{% url 'infra_app:carga_actividad' %}">Cargar Actividad</a></li>
+            <li><a href="{% url 'infra_app:delete_actividad' %}">Borrar Actividad</a></li>
         </ul>
     </nav>
-</body>
-</html>
+{% endblock content %}
+

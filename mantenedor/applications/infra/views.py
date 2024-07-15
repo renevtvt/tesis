@@ -1,8 +1,9 @@
 import csv
-from django.views.generic import TemplateView, FormView, ListView, UpdateView
+from django.views.generic import TemplateView, FormView, ListView, UpdateView, View
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db import transaction, IntegrityError
+from django.shortcuts import render, redirect
 from io import StringIO
 from .forms import *
 from .models import Infra, Filiales, Servicios, Unidades, Actividad
@@ -224,7 +225,74 @@ class cargaCsvActividad(FormView):
              index_msg = str(e.__cause__).find(":")
              return msg_error(self.request, self, form, f"Registro duplicado: {mensaje[index_msg+2:].strip()}")     
  
-        return super().form_valid(form)        
+        return super().form_valid(form)   
+
+class DeleteInfraView(View):
+    form_class = DeleteInfraForm
+    template_name = 'infra/delete_infra.html'
+    
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+    
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            filial = form.cleaned_data['filial']
+            ejercicio = form.cleaned_data['ejercicio']
+            mes = form.cleaned_data['mes']
+            
+            # Eliminar datos de Infra que coincidan con los criterios
+            
+        infra_records = Infra.objects.filter(id_filial=filial, ejercicio=ejercicio, mes=mes)
+        if infra_records:
+            infra_records.delete()
+            message = "Los registros se han eliminado correctamente."
+        else:
+            message = "Los registros que intentas eliminar no existen"
+            
+        return render(request, self.template_name, {'form': form, 'message': message})
+
+class DeleteActividadView(View):
+    form_class = DeleteActividadForm
+    template_name = 'infra/delete_actividad.html'
+    
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+    
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            filial = form.cleaned_data['filial']
+            ejercicio = form.cleaned_data['ejercicio']
+            mes = form.cleaned_data['mes']
+            
+            # Eliminar datos de Infra que coincidan con los criterios
+            
+        actividad_records = Actividad.objects.filter(id_filial=filial, ejercicio=ejercicio, mes=mes)
+        if actividad_records:
+            actividad_records.delete()
+            message = "Los registros se han eliminado correctamente."
+        else:
+            message = "Los registros que intentas eliminar no existen"
+            
+        return render(request, self.template_name, {'form': form, 'message': message})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 class ServiciosListView(ListView):
     model = Servicios

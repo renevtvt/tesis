@@ -30,6 +30,18 @@ urlpatterns = [
         name="carga_actividad"
     ),
     path(
+        'delete-infra/', 
+        views.DeleteInfraView.as_view(), 
+        name="delete_infra"
+    ),
+      path(
+        'delete-actividad/', 
+        views.DeleteActividadView.as_view(), 
+        name="delete_actividad"
+    ),
+
+
+    path(
         'servicios/', 
         views.ServiciosListView.as_view(), 
         name="lista_servicios"

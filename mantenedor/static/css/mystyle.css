@@ -1,0 +1,6 @@
+.header {
+    display: flex;
+    align-items: center;
+    background: #03acf5;
+    padding: 0.5em 1em 0.5em 1em;
+}
