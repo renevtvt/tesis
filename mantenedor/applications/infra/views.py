@@ -278,7 +278,24 @@ class DeleteActividadView(View):
             message = "Los registros que intentas eliminar no existen"
             
         return render(request, self.template_name, {'form': form, 'message': message})
+    
+class PromediosDiariosView(ListView):
+    template_name = 'infra/sum_promedios_diarios.html'
+    context_object_name = 'sum_promedio_diario'
 
+    def get_queryset(self):
+        sum_promedios_diarios = Infra.objects.sum_promedios_diarios()
+        return sum_promedios_diarios
+
+class ProductividadView(ListView):
+    template_name = 'infra/productividad.html'
+    context_object_name = 'productividad'
+
+    def get_queryset(self):
+        productividad = Infra.objects.calcular_productividad()
+        return productividad
+
+   
 
 
 

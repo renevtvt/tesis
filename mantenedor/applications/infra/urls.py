@@ -39,6 +39,17 @@ urlpatterns = [
         views.DeleteActividadView.as_view(), 
         name="delete_actividad"
     ),
+     path(
+        'promedios-diarios/', 
+        views.PromediosDiariosView.as_view(), 
+        name="promedios_diarios"
+    ),
+     path(
+        'productividad/', 
+        views.ProductividadView.as_view(), 
+        name="productividad"
+    ),
+    
 
 
     path(

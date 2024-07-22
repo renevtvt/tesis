@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from .managers import InfraManager
 
 
 # Create your models here.
@@ -78,6 +79,8 @@ class Infra(models.Model):
     disponible = models.PositiveIntegerField()
     habilitado = models.PositiveIntegerField()
     instalado = models.PositiveIntegerField()
+
+    objects = InfraManager()
 
     class Meta:
         verbose_name = 'Infraestructura'
