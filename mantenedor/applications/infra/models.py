@@ -76,9 +76,9 @@ class Infra(models.Model):
     dia = models.PositiveIntegerField()
     hora = models.PositiveIntegerField()
     id_unidad = models.ForeignKey(Unidades, on_delete=models.CASCADE)
-    disponible = models.PositiveIntegerField()
-    habilitado = models.PositiveIntegerField()
-    instalado = models.PositiveIntegerField()
+    disponible = models.DecimalField(max_digits=10, decimal_places=2)
+    habilitado = models.DecimalField(max_digits=10, decimal_places=2)
+    instalado = models.DecimalField(max_digits=10, decimal_places=2)
 
     objects = InfraManager()
 

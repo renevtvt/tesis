@@ -44,9 +44,10 @@ class cargaCsvInfra(FormView):
                 validar_dia(dia_csv)
                 hora_csv = parse_int(row[4], "hora")
                 validar_hora(hora_csv)
-                disponible_csv = parse_int(row[6], "disponible")
-                habilitado_csv = parse_int(row[7], "habilitado")
-                instalado_csv = parse_int(row[8], "instalado")
+                disponible_csv_str = row[6].replace(',', '.')
+                disponible_csv = parse_decimal(disponible_csv_str, "disponible")
+                habilitado_csv = parse_decimal(row[7], "habilitado")
+                instalado_csv = parse_decimal(row[8], "instalado")
 
                 # validación de negocio
                 if disponible_csv > habilitado_csv:

@@ -1,10 +1,17 @@
 from django.contrib import messages
+from decimal import Decimal, InvalidOperation
 
 def parse_int(value, field_name):
     try:
         return int(value.strip())
     except ValueError:
-        raise ValueError(f"El tipo de dato recibido en el campo '{field_name}' no es válido")
+        raise ValueError(f"El tipo de dato recibido en el campo '{field_name}' no es un entero válido: '{value}'")
+
+def parse_decimal(value, field_name):
+    try:
+        return Decimal(value)
+    except (ValueError, InvalidOperation) as e:
+        raise ValueError(f"El tipo de dato recibido en el campo {field_name} no es un valor válido: '{value}'")    
 
 def msg_error(request, view, form, message):
     messages.error(request, message)
