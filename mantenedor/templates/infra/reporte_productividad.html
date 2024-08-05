@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %} Reporte Productividad {% endblock titulo %}
+
+{% block content %} 
+    <h1>Productividad operativa por tipo de activo</h1>
+    <div class="table-container">
+        <table class="fixed-header">
+            <thead>
+                <tr>
+                    <th>Ejercicio</th>
+                    <th>Mes</th>
+                    <th>Servicio</th>
+                    <th>Unidad</th>
+                    {% for filial in reporte_productividad.0 %}
+                        {% if filial not in "id_unidad__id_servicio__nombre_servicio id_unidad__nombre_unidad ejercicio mes" %}
+                            <th>{{ filial }}</th>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in reporte_productividad %}
+                    <tr>
+                        <td>{{ i.ejercicio }}</td>
+                        <td>{{ i.mes }}</td>
+                        <td>{{ i.id_unidad__id_servicio__nombre_servicio }}</td>
+                        <td>{{ i.id_unidad__nombre_unidad }}</td>
+                        {% for filial, productividad in i.items %}
+                            {% if filial not in "id_unidad__id_servicio__nombre_servicio id_unidad__nombre_unidad ejercicio mes" %}
+                                <td>{{ productividad|floatformat:1 }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock content %}

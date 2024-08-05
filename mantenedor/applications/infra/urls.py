@@ -49,13 +49,15 @@ urlpatterns = [
         views.ProductividadView.as_view(), 
         name="productividad"
     ),
-    
-
-
     path(
-        'servicios/', 
-        views.ServiciosListView.as_view(), 
-        name="lista_servicios"
+        'reporte-activos/', 
+        views.ReporteActivos.as_view(), 
+        name="reporte_activos"
     ),
+    path(
+        'reporte-productividad/', 
+        views.ReporteProductividad.as_view(), 
+        name="reporte_productividad"
+    )
    
 ]

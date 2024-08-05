@@ -1,6 +1,9 @@
+
 from django.db import models
-from django.db.models import Sum, Count, F, FloatField
-from django.db.models.functions import Round, Cast
+from django.db.models import Sum, Count, F, Value
+from django.db.models.functions import Round, Concat
+import pandas as pd
+
 
 
 
@@ -10,12 +13,19 @@ class InfraManager(models.Manager):
         infra_filtrada = self.filter(disponible__gt=0)
         
         # Agrupar por día y tipo de unidad, y realizar las agregaciones
-        promedios_diarios = infra_filtrada.values('ejercicio', 'mes', 'dia', 'id_unidad').annotate(
-                suma_infra=Cast(Sum('disponible'), FloatField()),  # Convertir 'disponible' a FloatField
-                horas_abiertas=Cast(Count('hora'), FloatField())   # Asegurar que horas_abiertas sea un FloatField
-            ).annotate(
-                promedio_diario=Round(F('suma_infra') / F('horas_abiertas'),2)  # Calcular el promedio diario
-            ).order_by("id_unidad", "dia")
+        promedios_diarios = infra_filtrada.values(
+            'id_filial__nombre_filial', 
+            'ejercicio', 
+            'mes', 
+            'dia',
+            'id_unidad__id_servicio__nombre_servicio',
+            'id_unidad__nombre_unidad'
+        ).annotate(
+            suma_infra=Sum('disponible'),
+            horas_abiertas=Count('hora'),   
+        ).annotate(
+            promedio_diario=Round(F('suma_infra') / F('horas_abiertas'),2)  # Calcular el promedio diario
+        ).order_by("id_filial__nombre_filial", "id_unidad__id_servicio__nombre_servicio", "id_unidad__nombre_unidad", "dia")
         
         return promedios_diarios
         
@@ -26,7 +36,7 @@ class InfraManager(models.Manager):
         # Agrupar los promedios diarios por mes y unidad en Python
         sum_promedios_diarios = {}
         for promedio in promedios_diarios:
-            key = (promedio['ejercicio'], promedio['mes'], promedio['id_unidad'])
+            key = (promedio['id_filial__nombre_filial'], promedio['ejercicio'], promedio['mes'], promedio['id_unidad__id_servicio__nombre_servicio'], promedio['id_unidad__nombre_unidad'])
             if key not in sum_promedios_diarios:
                 sum_promedios_diarios[key] = 0
             sum_promedios_diarios[key] += promedio['promedio_diario']
@@ -34,9 +44,11 @@ class InfraManager(models.Manager):
         # Convertir el diccionario en una lista de diccionarios para poder pasarlo a la vista
         resultado = [
             {
-                'ejercicio': key[0],
-                'mes': key[1],
-                'id_unidad': key[2],
+                'id_filial__nombre_filial': key[0],
+                'ejercicio': key[1],
+                'mes': key[2],
+                'id_unidad__id_servicio__nombre_servicio': key[3],
+                'id_unidad__nombre_unidad': key[4],
                 'total_promedio_mensual': promedio_mensual
             }
             for key, promedio_mensual in sum_promedios_diarios.items()
@@ -50,16 +62,16 @@ class InfraManager(models.Manager):
         datos_promedios = self.sum_promedios_diarios()
 
         # Obtener la actividad por unidad, ejercicio y mes
-        actividades = Actividad.objects.values('ejercicio', 'mes', 'id_unidad').annotate(
+        actividades = Actividad.objects.values('id_filial__nombre_filial', 'ejercicio', 'mes', 'id_unidad__id_servicio__nombre_servicio', 'id_unidad__nombre_unidad').annotate(
             total_actividad=Sum('cantidad')
         )
 
         # Convertir el QuerySet de actividades a un diccionario para un acceso más rápido
-        actividad_dict = {(a['ejercicio'], a['mes'], a['id_unidad']): a['total_actividad'] for a in actividades}
+        actividad_dict = {(a['id_filial__nombre_filial'], a['ejercicio'], a['mes'], a['id_unidad__id_servicio__nombre_servicio'], a['id_unidad__nombre_unidad']): a['total_actividad'] for a in actividades}
 
         # Calcular la productividad
         for dato in datos_promedios:
-            key = (dato['ejercicio'], dato['mes'], dato['id_unidad'])
+            key = (dato['id_filial__nombre_filial'], dato['ejercicio'], dato['mes'], dato['id_unidad__id_servicio__nombre_servicio'], dato['id_unidad__nombre_unidad'])
             actividad = actividad_dict.get(key, 0)
             dato['actividad'] = actividad
             if dato['total_promedio_mensual'] > 0:
@@ -68,5 +80,65 @@ class InfraManager(models.Manager):
                 dato['productividad'] = 0
 
         return datos_promedios
+    
+    def promedio_simple_activos_por_mes(self):
+        data_reporte = self.filter(disponible__gt=0).values(
+            'id_filial__nombre_filial',
+            'id_unidad__id_servicio__nombre_servicio',
+            'id_unidad__nombre_unidad',
+            'ejercicio',
+            'mes'
+        ).annotate(
+            periodo=Concat(
+                F('ejercicio'), 
+                Value('-'), 
+                F('mes'), 
+                output_field=models.CharField()
+            ),
+            promedio=models.Sum('disponible') / models.Count('disponible')
+        ).order_by(
+            'id_filial__nombre_filial', 
+            'id_unidad__id_servicio__nombre_servicio', 
+            'id_unidad__nombre_unidad', 
+            'ejercicio', 
+            'mes')
+      # Convertir el QuerySet a una lista de diccionarios
+        data_list = list(data_reporte)
+        
+        # Convertir la lista de diccionarios a un DataFrame de pandas
+        df = pd.DataFrame(data_list)
+        
+        # Pivotar los datos
+        df_pivot = df.pivot_table(
+            index=['id_filial__nombre_filial', 'id_unidad__id_servicio__nombre_servicio', 'id_unidad__nombre_unidad'],
+            columns='periodo',
+            values='promedio'
+        ).reset_index()
+        
+        # Renombrar las columnas
+        df_pivot.columns.name = None
+        
+        # Convertir el DataFrame a una lista de diccionarios
+        df_pivot_list = df_pivot.to_dict(orient='records')
+        
+        return df_pivot_list
+    
+    def productividad(self):
+        data_list = list(self.calcular_productividad())
+        df = pd.DataFrame(data_list)
+        # Pivotar los datos
+        df_pivot = df.pivot_table(
+            index=['id_unidad__id_servicio__nombre_servicio', 'id_unidad__nombre_unidad', 'ejercicio', 'mes'],
+            columns='id_filial__nombre_filial',
+            values='productividad'
+        ).reset_index()
+
+        # Renombrar las columnas
+        df_pivot.columns.name = None
+        # Convertir el DataFrame a una lista de diccionarios
+        df_pivot_list = df_pivot.to_dict(orient='records')
+        
+
+        return df_pivot_list
     
     

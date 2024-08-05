@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %} Reporte Infraestructura {% endblock titulo %}
+
+{% block content %} 
+    <h1>Promedio mensual Infraestructura disponible</h1>
+    <div class="table-container">
+        <table class="fixed-header">
+            <thead>
+                <tr>
+                    <th>Filial</th>
+                    <th>Servicio</th>
+                    <th>Unidad</th>
+                    {% for periodo in reporte_activos.0 %}
+                        {% if periodo not in "id_filial__nombre_filial id_unidad__id_servicio__nombre_servicio id_unidad__nombre_unidad" %}
+                            <th>{{ periodo }}</th>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in reporte_activos %}
+                    <tr>
+                        <td>{{ i.id_filial__nombre_filial }}</td>
+                        <td>{{ i.id_unidad__id_servicio__nombre_servicio }}</td>
+                        <td>{{ i.id_unidad__nombre_unidad }}</td>
+                        {% for periodo, promedio in i.items %}
+                            {% if periodo not in "id_filial__nombre_filial id_unidad__id_servicio__nombre_servicio id_unidad__nombre_unidad" %}
+                                <td>{{ promedio|floatformat:1 }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock content %}

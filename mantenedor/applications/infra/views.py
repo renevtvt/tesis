@@ -296,43 +296,23 @@ class ProductividadView(ListView):
         productividad = Infra.objects.calcular_productividad()
         return productividad
 
-   
+class ReporteActivos(ListView):
+    template_name = 'infra/reporte_activos.html'
+    context_object_name = 'reporte_activos'
 
+    def get_queryset(self):
+        activos = Infra.objects.promedio_simple_activos_por_mes()
+        return activos
+    
+class ReporteProductividad(ListView):
+    template_name = 'infra/reporte_productividad.html'
+    context_object_name = 'reporte_productividad'
 
-
-
-
-
-
-
-
-
-
-
-
+    def get_queryset(self):
+        productividad = Infra.objects.productividad()
+        return productividad     
 
     
-class ServiciosListView(ListView):
-    model = Servicios
-    template_name = "infra/lista_servicios.html"
-    context_object_name = "servicios"
-
-
-class ServiciosUpdateView(UpdateView):
-    model = Servicios
-    form_class = ServiciosForm
-    template_name = 'infra/modificar_servicios.html'
-    success_url = reverse_lazy('servicios_list')
-
-
-        
-    
-
-
-    
-
-
-       
 
 
 

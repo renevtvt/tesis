@@ -9,10 +9,11 @@
     <table border="1">
         <thead>
             <tr>
+                <th>Nombre filial</th>
                 <th>Ejercicio</th>
                 <th>Mes</th>
                 <th>Unidad</th>
-                <th>Total Promedio Mensual</th>
+                <th>Suma Promedios Diarios</th>
                 <th>Actividad</th>
                 <th>Productividad</th>
             </tr>
@@ -20,9 +21,10 @@
         <tbody>
             {% for item in productividad %}
                 <tr>
+                    <td>{{ item.id_filial__nombre_filial }}</td>
                     <td>{{ item.ejercicio }}</td>
                     <td>{{ item.mes }}</td>
-                    <td>{{ item.id_unidad }}</td>
+                    <td>{{ item.id_unidad__nombre_unidad }}</td>
                     <td>{{ item.total_promedio_mensual }}</td>
                     <td>{{ item.actividad }}</td>
                     <td>{{ item.productividad }}</td>

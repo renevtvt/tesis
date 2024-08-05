@@ -8,15 +8,17 @@
     <table>
         <thead>
             <tr>
+                <th>id_filial</th>
                 <th>Ejercicio</th>
                 <th>Mes</th>
-                <th>Unidad</th>
+                <th>id_unidad</th>
                 <th>Activo Equivalente</th>
             </tr>
         </thead>
         <tbody>
             {% for promedio in sum_promedio_diario %}
             <tr>
+                <td>{{ promedio.id_filial }}</td>
                 <td>{{ promedio.ejercicio }}</td>
                 <td>{{ promedio.mes }}</td>
                 <td>{{ promedio.id_unidad }}</td>
