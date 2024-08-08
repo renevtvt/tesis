@@ -1,11 +1,7 @@
-
 from django.db import models
 from django.db.models import Sum, Count, F, Value
 from django.db.models.functions import Round, Concat
 import pandas as pd
-
-
-
 
 class InfraManager(models.Manager):
     def calcular_promedio_diario(self):
@@ -81,6 +77,20 @@ class InfraManager(models.Manager):
 
         return datos_promedios
     
+    def productividad(self):
+        df = pd.DataFrame(self.calcular_productividad())
+        # Pivotar los datos
+        df_pivot = df.pivot_table(
+            index=['id_unidad__id_servicio__nombre_servicio', 'id_unidad__nombre_unidad', 'ejercicio', 'mes'],
+            columns='id_filial__nombre_filial',
+            values='productividad'
+        ).reset_index()
+
+        # Convertir el DataFrame a una lista de diccionarios
+        df_pivot_list = df_pivot.to_dict(orient='records')
+        
+        return df_pivot_list
+    
     def promedio_simple_activos_por_mes(self):
         data_reporte = self.filter(disponible__gt=0).values(
             'id_filial__nombre_filial',
@@ -102,11 +112,9 @@ class InfraManager(models.Manager):
             'id_unidad__nombre_unidad', 
             'ejercicio', 
             'mes')
-      # Convertir el QuerySet a una lista de diccionarios
-        data_list = list(data_reporte)
-        
-        # Convertir la lista de diccionarios a un DataFrame de pandas
-        df = pd.DataFrame(data_list)
+       
+        # Convertir el queryset a un DataFrame de pandas
+        df = pd.DataFrame(data_reporte)
         
         # Pivotar los datos
         df_pivot = df.pivot_table(
@@ -115,30 +123,89 @@ class InfraManager(models.Manager):
             values='promedio'
         ).reset_index()
         
-        # Renombrar las columnas
-        df_pivot.columns.name = None
+        # Convertir el DataFrame a una lista de diccionarios para poder pasarlo a la vista HTML
+        df_pivot_list = df_pivot.to_dict(orient='records')
+                 
+        return df_pivot_list
         
-        # Convertir el DataFrame a una lista de diccionarios
+    def vista_infra(self, id_filial__nombre_filial, ejercicio, mes, dia):
+        datos = self.filter(
+            id_filial__nombre_filial=id_filial__nombre_filial,
+            ejercicio = ejercicio,
+            mes = mes,
+            dia  = dia
+        ).values(
+            'id_filial__nombre_filial', 
+            'ejercicio', 
+            'mes', 
+            'dia',
+            'hora',
+            'id_unidad__id_servicio__nombre_servicio',
+            'id_unidad__nombre_unidad',
+            'disponible'
+        ).order_by(
+            "id_filial__nombre_filial", 
+            "id_unidad__id_servicio__nombre_servicio", 
+            "id_unidad__nombre_unidad", 
+            "dia", 
+            "hora")
+
+        if not datos:
+            return []
+
+        # Convertir el queryset a un DataFrame de pandas
+        df = pd.DataFrame(datos)
+
+         # Pivotar los datos
+        df_pivot = df.pivot_table(
+            index=[
+                'id_filial__nombre_filial', 
+                'ejercicio', 
+                'mes', 
+                'dia',
+                'id_unidad__id_servicio__nombre_servicio',
+                'id_unidad__nombre_unidad',
+            ],
+            columns='hora',
+            values='disponible'
+        ).reset_index()
+        
+        # Convertir el DataFrame a una lista de diccionarios para poder pasarlo a la vista HTML
         df_pivot_list = df_pivot.to_dict(orient='records')
         
+
         return df_pivot_list
     
-    def productividad(self):
-        data_list = list(self.calcular_productividad())
-        df = pd.DataFrame(data_list)
-        # Pivotar los datos
-        df_pivot = df.pivot_table(
-            index=['id_unidad__id_servicio__nombre_servicio', 'id_unidad__nombre_unidad', 'ejercicio', 'mes'],
-            columns='id_filial__nombre_filial',
-            values='productividad'
-        ).reset_index()
+    def vista_update_infra(self, id_filial__nombre_filial, ejercicio, mes, dia, id_unidad__nombre_unidad):
+        datos = self.filter(
+            id_filial__nombre_filial=id_filial__nombre_filial,
+            ejercicio = ejercicio,
+            mes = mes,
+            dia  = dia,
+            id_unidad__nombre_unidad = id_unidad__nombre_unidad
+        ).values(
+            'id',
+            'id_filial__nombre_filial', 
+            'ejercicio', 
+            'mes', 
+            'dia',
+            'hora',
+            'id_unidad__id_servicio__nombre_servicio',
+            'id_unidad__nombre_unidad',
+            'disponible',
+            'habilitado',
+            'instalado'
+        ).order_by(
+            "id_filial__nombre_filial", 
+            "id_unidad__id_servicio__nombre_servicio", 
+            "id_unidad__nombre_unidad", 
+            "dia", 
+            "hora")
 
-        # Renombrar las columnas
-        df_pivot.columns.name = None
-        # Convertir el DataFrame a una lista de diccionarios
-        df_pivot_list = df_pivot.to_dict(orient='records')
+        if not datos:
+            return []
         
+        return datos
 
-        return df_pivot_list
     
     

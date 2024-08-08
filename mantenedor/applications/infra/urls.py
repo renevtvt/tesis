@@ -39,15 +39,21 @@ urlpatterns = [
         views.DeleteActividadView.as_view(), 
         name="delete_actividad"
     ),
-     path(
-        'promedios-diarios/', 
-        views.PromediosDiariosView.as_view(), 
-        name="promedios_diarios"
+    path(
+        'infra-lista/', 
+        views.InfraListView.as_view(), 
+        name="infra_lista"
     ),
-     path(
-        'productividad/', 
-        views.ProductividadView.as_view(), 
-        name="productividad"
+    path(
+        'infra-list-update/', 
+        views.InfraListViewUpdate.as_view(), 
+        name="infra_list_update"
+    )
+    ,
+    path(
+        'infra-list-update/update/<int:pk>/', 
+        views.InfraUpdateView.as_view(), 
+        name="infra_update"
     ),
     path(
         'reporte-activos/', 

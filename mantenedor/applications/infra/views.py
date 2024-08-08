@@ -1,6 +1,7 @@
+import urllib.parse
 import csv
 from django.views.generic import TemplateView, FormView, ListView, UpdateView, View
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.db import transaction, IntegrityError
 from django.shortcuts import render, redirect
@@ -280,22 +281,73 @@ class DeleteActividadView(View):
             
         return render(request, self.template_name, {'form': form, 'message': message})
     
-class PromediosDiariosView(ListView):
-    template_name = 'infra/sum_promedios_diarios.html'
-    context_object_name = 'sum_promedio_diario'
+class InfraListView(ListView):
+    template_name = "infra/infra_lista.html"
+    context_object_name = "infra_vista"
 
     def get_queryset(self):
-        sum_promedios_diarios = Infra.objects.sum_promedios_diarios()
-        return sum_promedios_diarios
+        form = InfraFilterForm(self.request.GET)
+        if form.is_valid():
+            id_filial__nombre_filial = form.cleaned_data.get('filial')
+            ejercicio = form.cleaned_data.get('ejercicio')
+            mes = form.cleaned_data.get('mes')
+            dia = form.cleaned_data.get('dia')
+            
+            infra_list = Infra.objects.vista_infra(
+                id_filial__nombre_filial=id_filial__nombre_filial,
+                ejercicio=ejercicio,
+                mes=mes,
+                dia=dia
+            )
+            return infra_list
+        return []
 
-class ProductividadView(ListView):
-    template_name = 'infra/productividad.html'
-    context_object_name = 'productividad'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = InfraFilterForm(self.request.GET or None)
+        return context
+    
+class InfraListViewUpdate(ListView):
+    template_name = "infra/infra_lista_update.html"
+    context_object_name = "infra_lista_update"
 
     def get_queryset(self):
-        productividad = Infra.objects.calcular_productividad()
-        return productividad
+        form = InfraFilterListForm(self.request.GET)
+        if form.is_valid():
+            id_filial__nombre_filial = form.cleaned_data.get('filial')
+            ejercicio = form.cleaned_data.get('ejercicio')
+            mes = form.cleaned_data.get('mes')
+            dia = form.cleaned_data.get('dia')
+            id_unidad__nombre_unidad = form.cleaned_data.get('unidad')
+            
+            infra_list = Infra.objects.vista_update_infra(
+                id_filial__nombre_filial=id_filial__nombre_filial,
+                ejercicio=ejercicio,
+                mes=mes,
+                dia=dia,
+                id_unidad__nombre_unidad= id_unidad__nombre_unidad
+            )
+            return infra_list
+        return []
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = InfraFilterListForm(self.request.GET or None)
+        # Almacenar los filtros en la sesión
+        self.request.session['filtros'] = self.request.GET
+        return context
+    
+
+class InfraUpdateView(UpdateView):
+    model = Infra
+    form_class = InfraUpdateForm
+    template_name = "infra/infra_update.html"
+   
+    def get_success_url(self):
+        # Recuperar los filtros de la sesión
+        filtros = self.request.session.get('filtros', {})
+        return reverse('infra_app:infra_list_update') + '?' + urllib.parse.urlencode(filtros) 
+    
 class ReporteActivos(ListView):
     template_name = 'infra/reporte_activos.html'
     context_object_name = 'reporte_activos'

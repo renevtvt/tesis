@@ -15,7 +15,7 @@ class Filiales(models.Model):
         verbose_name_plural = 'filiales'
 
     def __str__(self):
-        return f"{self.id_filial} - {self.nombre_filial}"
+        return f"{self.nombre_filial}"
     
 class Servicios(models.Model):
     id_servicio = models.IntegerField(primary_key=True)
@@ -40,7 +40,7 @@ class Unidades(models.Model):
         verbose_name_plural = 'unidades'
 
     def __str__(self):
-        return f"{self.id_unidad} - {self.nombre_unidad} - {self.id_servicio}"
+        return f"{self.nombre_unidad}"
 
 class Actividad(models.Model):
     id_filial = models.ForeignKey(Filiales, on_delete=models.CASCADE)
