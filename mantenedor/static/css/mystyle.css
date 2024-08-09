@@ -5,10 +5,17 @@
     padding: 0.5em 1em 0.5em 1em;
 
 }.table-container {
-    height: 90vh; /* Ajusta la altura máxima del contenedor de la tabla según tus necesidades */
+    height: 84vh; /* Ajusta la altura máxima del contenedor de la tabla según tus necesidades */
     overflow-y: auto;
     /*position: relative;*/
     width: 100%; /* Asegura que el contenedor ocupe todo el ancho disponible */
+    display: flex;
+}.table-container-2 {
+    height: 76vh; /* Ajusta la altura máxima del contenedor de la tabla según tus necesidades */
+    overflow-y: auto;
+    /*position: relative;*/
+    width: 100%; /* Asegura que el contenedor ocupe todo el ancho disponible */
+    display: flex;
 }
 
 .fixed-header thead {

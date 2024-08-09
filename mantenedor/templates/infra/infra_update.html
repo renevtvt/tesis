@@ -5,7 +5,7 @@
 
 {% block content %}
 <h1 class="text-center">Actualizar Infraestructura</h1>
-<form method="post" class="form">
+<form method="post" class="form">{% csrf_token %}
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="button">Guardar</button>

@@ -6,7 +6,7 @@
 {% block content %}
 <h1 class="text-center">Actualizar Infraestructura</h1>
 <div class="grid-x">
-    <form method="get" class="grid-x grid-margin-x">
+    <form method="get" class="grid-x grid-margin-x">{% csrf_token %}
         <div class="cell large-2">
             {{ form.filial.label_tag }}
             {{ form.filial }}
@@ -34,7 +34,7 @@
 </div>
 
 {% if infra_lista_update %}
-<div class="table-container">
+<div class="table-container-2">
     <table class="fixed-header">
         <thead>
             <tr>
