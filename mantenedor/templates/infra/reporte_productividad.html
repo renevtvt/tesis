@@ -32,7 +32,13 @@
                         <!-- accede a la combinación clave valor del diccionario e ignora lo que no corresponda a periodos y obtiene el promedio -->
                         {% for filial, productividad in i.items %}
                             {% if filial not in "id_unidad__id_servicio__nombre_servicio id_unidad__nombre_unidad ejercicio mes" %}
-                                <td>{{ productividad|floatformat:1 }}</td>
+                                <td>
+                                    {% if productividad != '-' %}
+                                        {{ productividad|floatformat:1 }}
+                                    {% else %}
+                                        {{ productividad }}
+                                    {% endif %}
+                                </td>
                             {% endif %}
                         {% endfor %}
                     </tr>

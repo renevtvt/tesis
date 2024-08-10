@@ -342,7 +342,18 @@ class InfraUpdateView(UpdateView):
     model = Infra
     form_class = InfraUpdateForm
     template_name = "infra/infra_update.html"
+
+    def form_valid(self, form):
+        try:
+            disponible = form.cleaned_data.get('disponible')
+            habilitado = form.cleaned_data.get('habilitado')
+            instalado = form.cleaned_data.get('instalado')
+            validacion_negocio(disponible, habilitado, instalado)
+        except Exception as e:
+            return msg_error(self.request, self, form, f"La actualización ha presentado un error: {e}")
+        return super().form_valid(form)  # Agregado para devolver una respuesta HTTP          
    
+
     def get_success_url(self):
         # Recuperar los filtros de la sesión
         filtros = self.request.session.get('filtros', {})

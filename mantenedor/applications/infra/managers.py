@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import Sum, Count, F, Value
 from django.db.models.functions import Round, Concat
 import pandas as pd
+pd.set_option('future.no_silent_downcasting', True)
 
 class InfraManager(models.Manager):
     def calcular_promedio_diario(self):
@@ -78,13 +79,16 @@ class InfraManager(models.Manager):
         return datos_promedios
     
     def productividad(self):
-        df = pd.DataFrame(self.calcular_productividad())
+        df = pd.DataFrame(self.calcular_productividad()).query('id_unidad__nombre_unidad in ["MQ Adulto", "Box", "UCI", "UTI", "Central", "Rayos X", "Scanner", "Ecografo", "Box Adulto", "Mamografo", "Resonador Magnetico"]')
+        
         # Pivotar los datos
         df_pivot = df.pivot_table(
             index=['id_unidad__id_servicio__nombre_servicio', 'id_unidad__nombre_unidad', 'ejercicio', 'mes'],
             columns='id_filial__nombre_filial',
             values='productividad'
         ).reset_index()
+        # valores NaN se reemplazan por guión
+        df_pivot = df_pivot.fillna('-')
 
         # Convertir el DataFrame a una lista de diccionarios
         df_pivot_list = df_pivot.to_dict(orient='records')

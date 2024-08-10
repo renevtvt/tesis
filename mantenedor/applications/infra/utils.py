@@ -27,4 +27,10 @@ def validar_dia(dia):
 
 def validar_hora(hora):
     if hora < 0 or hora > 23:
-        raise ValueError(f"El número de hora '{hora}' no es válido debe estar entre 0 y 23.")        
+        raise ValueError(f"El número de hora '{hora}' no es válido debe estar entre 0 y 23.")
+
+def validacion_negocio(disponible, habilitado, instalado):
+    if disponible > habilitado:
+        raise ValueError(f"Infraestructura disponible no puede ser mayor que infraestructura habilitada")
+    if habilitado > instalado:
+        raise ValueError(f"Infraestructura habilitada no puede ser mayor que infraestructura instalada")
