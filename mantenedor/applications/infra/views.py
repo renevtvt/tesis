@@ -4,7 +4,7 @@ from django.views.generic import TemplateView, FormView, ListView, UpdateView, V
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.db import transaction, IntegrityError
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from io import StringIO
 from .forms import *
 from .models import Infra, Filiales, Servicios, Unidades, Actividad
@@ -281,6 +281,39 @@ class DeleteActividadView(View):
             
         return render(request, self.template_name, {'form': form, 'message': message})
     
+class ActividadListView(ListView):
+    template_name = "infra/actividad_lista.html"
+    context_object_name = "actividad_lista"
+
+    def get_queryset(self):
+        actividad = Actividad.objects.listar_actividad()
+        return actividad
+    
+class ActividadListViewUpdate(ListView):
+    template_name = "infra/actividad_lista_update.html"
+    context_object_name = "actividad_lista_update"
+
+    def get_queryset(self):
+        form = ActividadFilterUpdateForm(self.request.GET)
+        if form.is_valid():
+            id_filial__nombre_filial = form.cleaned_data.get('filial')
+            ejercicio = form.cleaned_data.get('ejercicio')
+            
+            infra_list = Actividad.objects.vista_update_actividad(
+                id_filial__nombre_filial=id_filial__nombre_filial,
+                ejercicio=ejercicio,
+            )
+            return infra_list
+        return []
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = ActividadFilterUpdateForm(self.request.GET or None)
+        # Almacenar los filtros en la sesión
+        self.request.session['filtros'] = self.request.GET
+        return context
+
+
 class InfraListView(ListView):
     template_name = "infra/infra_lista.html"
     context_object_name = "infra_vista"
@@ -306,13 +339,14 @@ class InfraListView(ListView):
         context = super().get_context_data(**kwargs)
         context['form'] = InfraFilterForm(self.request.GET or None)
         return context
+      
     
 class InfraListViewUpdate(ListView):
     template_name = "infra/infra_lista_update.html"
     context_object_name = "infra_lista_update"
 
     def get_queryset(self):
-        form = InfraFilterListForm(self.request.GET)
+        form = InfraFilterUpdateForm(self.request.GET)
         if form.is_valid():
             id_filial__nombre_filial = form.cleaned_data.get('filial')
             ejercicio = form.cleaned_data.get('ejercicio')
@@ -332,7 +366,7 @@ class InfraListViewUpdate(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = InfraFilterListForm(self.request.GET or None)
+        context['form'] = InfraFilterUpdateForm(self.request.GET or None)
         # Almacenar los filtros en la sesión
         self.request.session['filtros'] = self.request.GET
         return context
@@ -373,7 +407,13 @@ class ReporteProductividad(ListView):
 
     def get_queryset(self):
         productividad = Infra.objects.productividad()
-        return productividad     
+        return productividad
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Definir la lista de unidades que deben mostrar productividad como porcentaje
+        context['unidades_porcentaje'] = unidades_porcentaje
+        return context     
 
     
 

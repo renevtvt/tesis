@@ -1,6 +1,5 @@
 from django.db import models
-from django.core.exceptions import ValidationError
-from .managers import InfraManager
+from .managers import InfraManager, ActividadManager
 
 
 # Create your models here.
@@ -48,6 +47,8 @@ class Actividad(models.Model):
     mes = models.PositiveIntegerField()
     id_unidad = models.ForeignKey(Unidades, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField()
+
+    objects = ActividadManager()
         
     class Meta:    
 

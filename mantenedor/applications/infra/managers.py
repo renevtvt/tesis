@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import Sum, Count, F, Value
 from django.db.models.functions import Round, Concat
 import pandas as pd
+from .utils import *
 pd.set_option('future.no_silent_downcasting', True)
 
 class InfraManager(models.Manager):
@@ -72,7 +73,10 @@ class InfraManager(models.Manager):
             actividad = actividad_dict.get(key, 0)
             dato['actividad'] = actividad
             if dato['total_promedio_mensual'] > 0:
-                dato['productividad'] = round(actividad / dato['total_promedio_mensual'], 2)
+                if dato['id_unidad__nombre_unidad'] in unidades_porcentaje:
+                    dato['productividad'] = round((actividad / dato['total_promedio_mensual']) * 100, 2)
+                else:
+                    dato['productividad'] = round(actividad / dato['total_promedio_mensual'], 2)
             else:
                 dato['productividad'] = 0
 
@@ -92,7 +96,7 @@ class InfraManager(models.Manager):
 
         # Convertir el DataFrame a una lista de diccionarios
         df_pivot_list = df_pivot.to_dict(orient='records')
-        
+       
         return df_pivot_list
     
     def promedio_simple_activos_por_mes(self):
@@ -126,9 +130,13 @@ class InfraManager(models.Manager):
             columns='periodo',
             values='promedio'
         ).reset_index()
+
+        # valores NaN se reemplazan por guión
+        df_pivot = df_pivot.fillna('-')
         
         # Convertir el DataFrame a una lista de diccionarios para poder pasarlo a la vista HTML
         df_pivot_list = df_pivot.to_dict(orient='records')
+        
                  
         return df_pivot_list
         
@@ -174,6 +182,7 @@ class InfraManager(models.Manager):
             values='disponible'
         ).reset_index()
         
+        
         # Convertir el DataFrame a una lista de diccionarios para poder pasarlo a la vista HTML
         df_pivot_list = df_pivot.to_dict(orient='records')
         
@@ -205,6 +214,62 @@ class InfraManager(models.Manager):
             "id_unidad__nombre_unidad", 
             "dia", 
             "hora")
+
+        if not datos:
+            return []
+        
+        return datos
+
+class ActividadManager(models.Manager):
+    def listar_actividad(self): 
+        data_actividad = self.values(
+            'id_filial__nombre_filial',
+            'id_unidad__id_servicio__nombre_servicio',
+            'id_unidad__nombre_unidad',
+            'ejercicio',
+            'mes',
+            'cantidad'
+        ).order_by(
+            'id_filial__nombre_filial', 
+            'id_unidad__id_servicio__nombre_servicio', 
+            'id_unidad__nombre_unidad', 
+            'ejercicio', 
+            'mes')
+
+        df = pd.DataFrame(data_actividad)
+            
+        # Pivotar los datos
+        df_pivot = df.pivot_table(
+                index=['id_unidad__id_servicio__nombre_servicio', 'id_unidad__nombre_unidad', 'ejercicio', 'mes'],
+                columns='id_filial__nombre_filial',
+                values='cantidad'
+        ).reset_index()
+        # valores NaN se reemplazan por guión
+        df_pivot = df_pivot.fillna('-')
+
+        # Convertir el DataFrame a una lista de diccionarios
+        df_pivot_list = df_pivot.to_dict(orient='records')
+       
+        
+        return df_pivot_list
+    
+    def vista_update_actividad(self, id_filial__nombre_filial, ejercicio):
+        datos = self.filter(
+            id_filial__nombre_filial=id_filial__nombre_filial,
+            ejercicio = ejercicio,
+        ).values(
+            'id',
+            'id_filial__nombre_filial', 
+            'ejercicio', 
+            'mes', 
+            'id_unidad__id_servicio__nombre_servicio',
+            'id_unidad__nombre_unidad',
+            'cantidad',
+        ).order_by(
+            "id_filial__nombre_filial", 
+            "id_unidad__id_servicio__nombre_servicio", 
+            "id_unidad__nombre_unidad", 
+            "mes")
 
         if not datos:
             return []

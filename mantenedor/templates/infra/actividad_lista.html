@@ -1,10 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %}
 
-{% block titulo %} Reporte Productividad {% endblock titulo %}
+
+
+{% block titulo %} Actividad {% endblock titulo %}
 
 {% block content %} 
-    <h1 class="text-center">Productividad operativa por tipo de activo</h1>
+    <h1 class="text-center">Actividad mensual por unidad</h1>
     <div class="table-container">
         <table class="fixed-header">
             <thead>
@@ -15,7 +18,7 @@
                     <th>Unidad</th>
                     <!-- accede al primer elemento de la lista de diccionarios y recorre las columnas que sean FILIALES -->
                     <!-- ignora columnas que no corresponda a filiales, teniendo eso recorre filiales para ponerlas como columnas del reporte -->
-                    {% for filial in reporte_productividad.0 %}
+                    {% for filial in actividad_lista.0 %}
                         {% if filial not in "id_unidad__id_servicio__nombre_servicio id_unidad__nombre_unidad ejercicio mes" %}
                             <th>{{ filial }}</th>
                         {% endif %}
@@ -23,28 +26,25 @@
                 </tr>
             </thead>
             <tbody>
-                {% for i in reporte_productividad %}
+                {% for i in actividad_lista %}
                     <tr>
                         <td>{{ i.ejercicio }}</td>
                         <td>{{ i.mes }}</td>
                         <td>{{ i.id_unidad__id_servicio__nombre_servicio }}</td>
                         <td>{{ i.id_unidad__nombre_unidad }}</td>
-                        <!-- accede a la combinación clave valor del diccionario e ignora lo que no corresponda a filiales y obtiene la productividad -->
-                        {% for filial, productividad in i.items %}
+                        <!-- accede a la combinación clave valor del diccionario e ignora lo que no corresponda a filiales y obtiene la actividad -->
+                        {% for filial, cantidad in i.items %}
                             {% if filial not in "id_unidad__id_servicio__nombre_servicio id_unidad__nombre_unidad ejercicio mes" %}
-                                <td>                              
-                                    {% if productividad != '-' %}
-                                        {% if i.id_unidad__nombre_unidad in unidades_porcentaje %}
-                                            {{ productividad|floatformat:1 }}%
-                                        {% else %}
-                                            {{ productividad|floatformat:1 }}
-                                        {% endif %}
+                                <td>
+                                    {% if cantidad != '-' %}                              
+                                        {{ cantidad|floatformat:0|intcomma }}
                                     {% else %}
-                                        {{ productividad }}
-                                    {% endif %}
+                                        {{ cantidad }}   
+                                    {% endif %}    
                                 </td>
                             {% endif %}
                         {% endfor %}
+
                     </tr>
                 {% endfor %}
             </tbody>

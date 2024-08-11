@@ -34,3 +34,5 @@ def validacion_negocio(disponible, habilitado, instalado):
         raise ValueError(f"Infraestructura disponible no puede ser mayor que infraestructura habilitada")
     if habilitado > instalado:
         raise ValueError(f"Infraestructura habilitada no puede ser mayor que infraestructura instalada")
+
+unidades_porcentaje = ["MQ Adulto", "UCI", "UTI"]

@@ -39,6 +39,16 @@ urlpatterns = [
         views.DeleteActividadView.as_view(), 
         name="delete_actividad"
     ),
+      path(
+        'actividad-lista/', 
+        views.ActividadListView.as_view(), 
+        name="actividad_lista"
+    ),
+      path(
+        'actividad-lista-update/', 
+        views.ActividadListViewUpdate.as_view(), 
+        name="actividad_lista_update"
+    ),
     path(
         'infra-lista/', 
         views.InfraListView.as_view(), 

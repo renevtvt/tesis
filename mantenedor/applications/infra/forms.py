@@ -31,7 +31,7 @@ class InfraFilterForm(forms.Form):
     mes = forms.IntegerField(label='Mes')
     dia = forms.IntegerField(label='Dia')
 
-class InfraFilterListForm(forms.Form):
+class InfraFilterUpdateForm(forms.Form):
     filial = forms.ModelChoiceField(queryset=Filiales.objects.all(), label='Filial')
     ejercicio = forms.IntegerField(label='Ejercicio')
     mes = forms.IntegerField(label='Mes')
@@ -42,5 +42,11 @@ class InfraUpdateForm(forms.ModelForm):
     class Meta:
         model = Infra
         fields = ['disponible', 'habilitado', 'instalado']
+
+class ActividadFilterUpdateForm(forms.Form):
+    filial = forms.ModelChoiceField(queryset=Filiales.objects.all(), label='Filial')
+    ejercicio = forms.IntegerField(label='Ejercicio')
+   
+
 
   
