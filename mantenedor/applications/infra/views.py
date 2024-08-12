@@ -298,12 +298,14 @@ class ActividadListViewUpdate(ListView):
         if form.is_valid():
             id_filial__nombre_filial = form.cleaned_data.get('filial')
             ejercicio = form.cleaned_data.get('ejercicio')
+            id_unidad__nombre_unidad = form.cleaned_data.get('unidad')
             
-            infra_list = Actividad.objects.vista_update_actividad(
+            lista_actividad = Actividad.objects.vista_update_actividad(
                 id_filial__nombre_filial=id_filial__nombre_filial,
                 ejercicio=ejercicio,
+                id_unidad__nombre_unidad = id_unidad__nombre_unidad
             )
-            return infra_list
+            return lista_actividad
         return []
 
     def get_context_data(self, **kwargs):
@@ -312,6 +314,18 @@ class ActividadListViewUpdate(ListView):
         # Almacenar los filtros en la sesión
         self.request.session['filtros'] = self.request.GET
         return context
+    
+class ActividadUpdateView(UpdateView):
+    model = Actividad
+    form_class = ActividadUpdateForm
+    template_name = "infra/actividad_update.html"
+
+    
+
+    def get_success_url(self):
+        # Recuperar los filtros de la sesión
+        filtros = self.request.session.get('filtros', {})
+        return reverse('infra_app:actividad_lista_update') + '?' + urllib.parse.urlencode(filtros)          
 
 
 class InfraListView(ListView):

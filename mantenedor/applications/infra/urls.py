@@ -50,6 +50,11 @@ urlpatterns = [
         name="actividad_lista_update"
     ),
     path(
+        'actividad-lista-update/update<int:pk>', 
+        views.ActividadUpdateView.as_view(), 
+        name="actividad_update"
+    ),
+    path(
         'infra-lista/', 
         views.InfraListView.as_view(), 
         name="infra_lista"

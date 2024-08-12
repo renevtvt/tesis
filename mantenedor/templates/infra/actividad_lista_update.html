@@ -15,6 +15,10 @@
                 {{ form.ejercicio.label_tag }}
                 {{ form.ejercicio }}
             </div>
+            <div class="cell large-1">
+                {{ form.unidad.label_tag }}
+                {{ form.unidad }}
+            </div>
             <div class="cell large-1 align-self-bottom">
                 <button type="submit" class="button">Buscar</button>
             </div>
@@ -43,7 +47,7 @@
                         <td>{{ i.id_unidad__nombre_unidad }}</td>
                         <td>{{ i.cantidad|floatformat:0|intcomma }}</td>
                         <td>
-                                                                             
+                            <a href="{% url 'infra_app:actividad_update' pk=i.id %}">Actualizar</a>                                                       
                         </td>
                     </tr>
                 {% endfor %}

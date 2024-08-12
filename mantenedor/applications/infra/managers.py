@@ -253,10 +253,11 @@ class ActividadManager(models.Manager):
         
         return df_pivot_list
     
-    def vista_update_actividad(self, id_filial__nombre_filial, ejercicio):
+    def vista_update_actividad(self, id_filial__nombre_filial, ejercicio, id_unidad__nombre_unidad):
         datos = self.filter(
             id_filial__nombre_filial=id_filial__nombre_filial,
             ejercicio = ejercicio,
+            id_unidad__nombre_unidad = id_unidad__nombre_unidad
         ).values(
             'id',
             'id_filial__nombre_filial', 

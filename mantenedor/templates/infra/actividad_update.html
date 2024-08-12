@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %} Actualizar Actividad {% endblock titulo %}
+
+{% block content %}
+<h1 class="text-center">Actualizar Actividad</h1>
+<form method="post" class="form">{% csrf_token %}
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="button">Guardar</button>
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</form>
+{% endblock content %}
