@@ -4,45 +4,35 @@
     background: #03acf5;
     padding: 0.5em 1em 0.5em 1em;
 
-}.table-container {
-    height: 84vh; /* Ajusta la altura máxima del contenedor de la tabla según tus necesidades */
-    overflow-y: auto;
-    /*position: relative;*/
-    width: 100%; /* Asegura que el contenedor ocupe todo el ancho disponible */
-    display: flex;
-}.table-container-2 {
-    height: 76vh; /* Ajusta la altura máxima del contenedor de la tabla según tus necesidades */
-    overflow-y: auto;
-    /*position: relative;*/
-    width: 100%; /* Asegura que el contenedor ocupe todo el ancho disponible */
-    display: flex;
+}
+.table-responsive {
+    height: 88vh; /* Ajusta la altura máxima del contenedor de la tabla según tus necesidades */
+    overflow-y: scroll; /* Habilita el scroll vertical */
 }
 
-.fixed-header thead {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    background-color: #03acf5; /* Fondo blanco para los encabezados */
-    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Añadir sombra para destacar los encabezados */
+.altura {
+  height: 82vh; /* Ajusta la altura máxima del contenedor de la tabla según tus necesidades */
 }
 
-.fixed-header th, .fixed-header td {
-    padding: 10px;
-    text-align: center;
-    vertical-align: middle; /* Asegura que el contenido esté centrado verticalmente */
-    white-space: nowrap; /* Evita que el contenido se divida en varias líneas */
+.altura_2 {
+  height: 80vh; /* Ajusta la altura máxima del contenedor de la tabla según tus necesidades */
 }
 
-/* Agrega un borde inferior para destacar los encabezados*/
-.fixed-header th {
-    border-bottom: 2px solid #ddd;
-    color: #fff; /* Color de letra blanca para los encabezados */
-} 
-
-.fixed-header td {
-    border-bottom: 1px solid #ddd; /* Borde inferior para las celdas */
+/* Clase para hacer que el encabezado de la tabla sea sticky */
+.sticky-header {
+  position: sticky;
+  top: -1;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Añadir sombra para destacar los encabezados */
+  background-color: #007bff; /* Azul Bootstrap */
+  color: white; /* Texto blanco */
 }
 
-body {
-    font-family: 'Roboto';
+.sticky-header th {
+  background-color: #03acf5; /* Azul Bootstrap */
+  color: white; /* Texto blanco */
 }
+
+
+
+
+

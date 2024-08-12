@@ -4,66 +4,67 @@
 {% block titulo %} Lista Infraestructura {% endblock titulo %}
 
 {% block content %}
-<h1 class="text-center">Lista Infraestructura</h1>
-<div class="grid-x">
-    <form method="get" class="grid-x grid-margin-x"> {% csrf_token %}
-        <div class="cell large-2">
-            {{ form.filial.label_tag }}
-            {{ form.filial }}
-          
-        </div>
-        <div class="cell large-2">
-            {{ form.ejercicio.label_tag }}
-            {{ form.ejercicio }}
-        </div>
-        <div class="cell large-2">
-            {{ form.mes.label_tag }}
-            {{ form.mes }}
-        </div>
-        <div class="cell large-2">
-            {{ form.dia.label_tag }}
-            {{ form.dia }}
-        </div>
-        <div class="cell large-2 align-self-bottom">
-            <button type="submit" class="button">Buscar</button>
-        </div>
-    </form>
-</div>
-
-    {% if infra_vista %}
-    <div class="table-container-2">
-        <table class="fixed-header">
-            <thead>
-                <tr>
-                    <th>Filial</th>
-                    <th>Ejercicio</th>
-                    <th>Mes</th>
-                    <th>Servicio</th>
-                    <th>Unidad</th>
-                    {% for hora in infra_vista.0 %}
-                        {% if hora|stringformat:"s" not in "id_filial__nombre_filial ejercicio mes dia id_unidad__id_servicio__nombre_servicio id_unidad__nombre_unidad" %}
-                            <th>{{ hora }}</th>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for i in infra_vista %}
-                    <tr>
-                        <td>{{ i.id_filial__nombre_filial }}</td>
-                        <td>{{ i.ejercicio }}</td>
-                        <td>{{ i.mes }}</td>
-                        <td>{{ i.id_unidad__id_servicio__nombre_servicio }}</td>
-                        <td>{{ i.id_unidad__nombre_unidad }}</td>
-                        {% for hora, valor in i.items %}
-                            {% if hora|stringformat:"s" not in "id_filial__nombre_filial ejercicio mes dia id_unidad__id_servicio__nombre_servicio id_unidad__nombre_unidad" %}
-                                <td>{{ valor|floatformat:1 }}</td>
-                            {% endif %}
+    <div class="container-fluid">
+        <h1 class="text-center">Lista Infraestructura</h1>
+            <form method="get" class="col-md-12">{% csrf_token %}
+                <div class="form-row d-flex align-items-center justify-content-start">
+                    <div class="form-group mx-1">
+                        {{ form.filial.label_tag }}
+                        {{ form.filial }}
+                    </div>
+                    <div class="form-group mx-1">
+                        {{ form.ejercicio.label_tag }}
+                        {{ form.ejercicio }}
+                    </div>
+                    <div class="form-group mx-1">
+                        {{ form.mes.label_tag }}
+                        {{ form.mes }}
+                    </div>
+                    <div class="form-group mx-1">
+                        {{ form.dia.label_tag }}
+                        {{ form.dia }}
+                    </div>
+                    <div class="form-group mx-1 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary">Buscar</button>
+                    </div>
+                    </div>
+            </form>
+            
+        {% if infra_vista %}
+            <div class="table-responsive altura">
+                <table class="table table-bordered table-striped text-center align-middle">
+                    <thead class="sticky-header">
+                        <tr>
+                            <th>Filial</th>
+                            <th>Ejercicio</th>
+                            <th>Mes</th>
+                            <th>Servicio</th>
+                            <th>Unidad</th>
+                            {% for hora in infra_vista.0 %}
+                                {% if hora|stringformat:"s" not in "id_filial__nombre_filial ejercicio mes dia id_unidad__id_servicio__nombre_servicio id_unidad__nombre_unidad" %}
+                                    <th>{{ hora }}</th>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in infra_vista %}
+                            <tr>
+                                <td>{{ i.id_filial__nombre_filial }}</td>
+                                <td>{{ i.ejercicio }}</td>
+                                <td>{{ i.mes }}</td>
+                                <td>{{ i.id_unidad__id_servicio__nombre_servicio }}</td>
+                                <td>{{ i.id_unidad__nombre_unidad }}</td>
+                                {% for hora, valor in i.items %}
+                                    {% if hora|stringformat:"s" not in "id_filial__nombre_filial ejercicio mes dia id_unidad__id_servicio__nombre_servicio id_unidad__nombre_unidad" %}
+                                        <td>{{ valor|floatformat:1 }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                                </tr>
                         {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>            
 {% endblock content %}

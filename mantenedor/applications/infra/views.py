@@ -321,7 +321,6 @@ class ActividadUpdateView(UpdateView):
     template_name = "infra/actividad_update.html"
 
     
-
     def get_success_url(self):
         # Recuperar los filtros de la sesión
         filtros = self.request.session.get('filtros', {})

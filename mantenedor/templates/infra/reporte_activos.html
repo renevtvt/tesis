@@ -4,44 +4,46 @@
 {% block titulo %} Reporte Infraestructura {% endblock titulo %}
 
 {% block content %} 
-    <h1 class="text-center">Promedio mensual Infraestructura disponible</h1>
-    <div class="table-container">
-        <table class="fixed-header">
-            <thead>
-                <tr>
-                    <th>Filial</th>
-                    <th>Servicio</th>
-                    <th>Unidad</th>
-                    <!-- accede al primer elemento de la lista de diccionarios y recorre las columnas que sean periodos -->
-                    <!-- no se accede directamente al periodo porque no sabemos hasta que periodo hay datos, por eso se excluyen columnas que no son periodos -->
-                    {% for periodo in reporte_activos.0 %}
-                        {% if periodo not in "id_filial__nombre_filial id_unidad__id_servicio__nombre_servicio id_unidad__nombre_unidad" %}
-                            <th>{{ periodo }}</th>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for i in reporte_activos %}
+    <div class="container">
+        <h1 class="text-center">Promedio mensual Infraestructura disponible</h1>
+        <div class="table-responsive" >
+            <table class="table table-bordered table-striped text-center align-middle">
+                <thead class="sticky-header">
                     <tr>
-                        <td>{{ i.id_filial__nombre_filial }}</td>
-                        <td>{{ i.id_unidad__id_servicio__nombre_servicio }}</td>
-                        <td>{{ i.id_unidad__nombre_unidad }}</td>
-                        <!-- accede a la combinación clave valor del diccionario e ignora lo que no corresponda a periodos y obtiene el promedio -->
-                        {% for periodo, promedio in i.items %}
+                        <th>Filial</th>
+                        <th>Servicio</th>
+                        <th>Unidad</th>
+                        <!-- accede al primer elemento de la lista de diccionarios y recorre las columnas que sean periodos -->
+                        <!-- no se accede directamente al periodo porque no sabemos hasta que periodo hay datos, por eso se excluyen columnas que no son periodos -->
+                        {% for periodo in reporte_activos.0 %}
                             {% if periodo not in "id_filial__nombre_filial id_unidad__id_servicio__nombre_servicio id_unidad__nombre_unidad" %}
-                                <td>
-                                    {% if promedio != '-' %}
-                                        {{ promedio|floatformat:1 }}
-                                    {% else %}
-                                        {{ promedio }}
-                                    {% endif %}
-                                </td>
+                                <th>{{ periodo }}</th>
                             {% endif %}
                         {% endfor %}
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for i in reporte_activos %}
+                        <tr>
+                            <td>{{ i.id_filial__nombre_filial }}</td>
+                            <td>{{ i.id_unidad__id_servicio__nombre_servicio }}</td>
+                            <td>{{ i.id_unidad__nombre_unidad }}</td>
+                            <!-- accede a la combinación clave valor del diccionario e ignora lo que no corresponda a periodos y obtiene el promedio -->
+                            {% for periodo, promedio in i.items %}
+                                {% if periodo not in "id_filial__nombre_filial id_unidad__id_servicio__nombre_servicio id_unidad__nombre_unidad" %}
+                                    <td>
+                                        {% if promedio != '-' %}
+                                            {{ promedio|floatformat:1 }}
+                                        {% else %}
+                                            {{ promedio }}
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endblock content %}

@@ -4,39 +4,39 @@
 {% block titulo %} Actualizar Infraestructura {% endblock titulo %}
 
 {% block content %}
+<div class="container">
     <h1 class="text-center">Actualizar Infraestructura</h1>
-    <div class="grid-x">
-        <form method="get" class="grid-x grid-margin-x">{% csrf_token %}
-            <div class="cell large-2">
-                {{ form.filial.label_tag }}
-                {{ form.filial }}
-            </div>
-            <div class="cell large-2">
-                {{ form.ejercicio.label_tag }}
-                {{ form.ejercicio }}
-            </div>
-            <div class="cell large-2">
-                {{ form.mes.label_tag }}
-                {{ form.mes }}
-            </div>
-            <div class="cell large-2">
-                {{ form.dia.label_tag }}
-                {{ form.dia }}
-            </div>
-            <div class="cell large-2">
-                {{ form.unidad.label_tag }}
-                {{ form.unidad }}
-            </div>
-            <div class="cell large-2 align-self-bottom">
-                <button type="submit" class="button">Buscar</button>
-            </div>
+        <form method="get" class="col-md-12">{% csrf_token %}
+            <div class="form-row d-flex align-items-center justify-content-start">
+                <div class="form-group mx-1">
+                    {{ form.filial.label_tag }}
+                    {{ form.filial }}
+                </div>    
+                <div class="form-group mx-1">
+                    {{ form.ejercicio.label_tag }}
+                    {{ form.ejercicio }}
+                </div>    
+                <div class="form-group mx-1">
+                    {{ form.mes.label_tag }}
+                    {{ form.mes }}
+                </div>
+                <div class="form-group mx-1">
+                    {{ form.dia.label_tag }}
+                    {{ form.dia }}
+                </div>
+                <div class="form-group mx-1">
+                    {{ form.unidad.label_tag }}
+                    {{ form.unidad }}
+                </div>
+                <div class="form-group mx-1 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
+            </div>    
         </form>
-    </div>
-
     {% if infra_lista_update %}
-    <div class="table-container-2">
-        <table class="fixed-header">
-            <thead>
+    <div class="table-responsive altura_2">
+        <table class="table table-bordered table-striped text-center align-middle">
+            <thead class="sticky-header">
                 <tr>
                     <th>Filial</th>
                     <th>Ejercicio</th>
@@ -71,4 +71,5 @@
         </table>
     </div>
     {% endif %}
+</div>    
 {% endblock content %}

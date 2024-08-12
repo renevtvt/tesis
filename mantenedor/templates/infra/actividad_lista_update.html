@@ -5,54 +5,58 @@
 {% block titulo %} Actualizar Actividad {% endblock titulo %}
 
 {% block content %}
-    <h1 class="text-center">Actualizar Actividad</h1>
-        <form method="get" class="grid-x grid-margin-x">{% csrf_token %}
-            <div class="cell large-1">
-                {{ form.filial.label_tag }}
-                {{ form.filial }}
-            </div>
-            <div class="cell large-1">
-                {{ form.ejercicio.label_tag }}
-                {{ form.ejercicio }}
-            </div>
-            <div class="cell large-1">
-                {{ form.unidad.label_tag }}
-                {{ form.unidad }}
-            </div>
-            <div class="cell large-1 align-self-bottom">
-                <button type="submit" class="button">Buscar</button>
-            </div>
-        </form>
-  
+    <div class="container">
+        <h1 class="text-center">Actualizar Actividad</h1>
+            <form method="get" class="col-md-12">{% csrf_token %}
+                <div class="form-row d-flex align-items-center justify-content-start">
+                    <div class="form-group mx-1">
+                        {{ form.filial.label_tag }}
+                        {{ form.filial }}
+                    </div>
+                    <div class="form-group mx-1">
+                        {{ form.ejercicio.label_tag }}
+                        {{ form.ejercicio }}
+                    </div>
+                    <div class="form-group mx-1">
+                        {{ form.unidad.label_tag }}
+                        {{ form.unidad }}
+                    </div>
+                    <div class="form-group mx-1 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary">Buscar</button>
+                    </div>
+                </div>       
+            </form>
 
-    {% if actividad_lista_update %}
-    <div class="table-container-2">
-        <table class="fixed-header">
-            <thead>
-                <tr>
-                    <th>Filial</th>
-                    <th>Ejercicio</th>
-                    <th>Mes</th>
-                    <th>Unidad</th>
-                    <th>Cantidad</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for i in actividad_lista_update %}
-                    <tr>
-                        <td>{{ i.id_filial__nombre_filial }}</td>
-                        <td>{{ i.ejercicio }}</td>
-                        <td>{{ i.mes }}</td>
-                        <td>{{ i.id_unidad__nombre_unidad }}</td>
-                        <td>{{ i.cantidad|floatformat:0|intcomma }}</td>
-                        <td>
-                            <a href="{% url 'infra_app:actividad_update' pk=i.id %}">Actualizar</a>                                                       
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% endif %}
+        {% if actividad_lista_update %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped text-center align-middle">
+                    <thead class="sticky-header">
+                        <tr>
+                            <th>Filial</th>
+                            <th>Ejercicio</th>
+                            <th>Mes</th>
+                            <th>Unidad</th>
+                            <th>Cantidad</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in actividad_lista_update %}
+                            <tr>
+                                <td>{{ i.id_filial__nombre_filial }}</td>
+                                <td>{{ i.ejercicio }}</td>
+                                <td>{{ i.mes }}</td>
+                                <td>{{ i.id_unidad__nombre_unidad }}</td>
+                                <td>{{ i.cantidad|floatformat:0|intcomma }}</td>
+                                <td>
+                                    <a href="{% url 'infra_app:actividad_update' pk=i.id %}">Actualizar</a>                                                       
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>    
+    
 {% endblock content %}

@@ -2,15 +2,14 @@
 {% load static %}
 {% load humanize %}
 
-
-
 {% block titulo %} Actividad {% endblock titulo %}
 
 {% block content %} 
+<div class="container">
     <h1 class="text-center">Actividad mensual por unidad</h1>
-    <div class="table-container">
-        <table class="fixed-header">
-            <thead>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped text-center align-middle">
+            <thead class="sticky-header">
                 <tr>
                     <th>Ejercicio</th>
                     <th>Mes</th>
@@ -50,4 +49,5 @@
             </tbody>
         </table>
     </div>
+</div>    
 {% endblock content %}
