@@ -6,7 +6,7 @@
 {% block content %}
     <div class="container-fluid">
         <h1 class="text-center">Lista Infraestructura</h1>
-            <form method="get" class="col-md-12">{% csrf_token %}
+            <form method="get">{% csrf_token %}
                 <div class="form-row d-flex align-items-center justify-content-start">
                     <div class="form-group mx-1">
                         {{ form.filial.label_tag }}
@@ -27,11 +27,11 @@
                     <div class="form-group mx-1 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary">Buscar</button>
                     </div>
-                    </div>
+                </div>
             </form>
             
         {% if infra_vista %}
-            <div class="table-responsive altura">
+            <div class="table-responsive" style="height: 82vh">
                 <table class="table table-bordered table-striped text-center align-middle">
                     <thead class="sticky-header">
                         <tr>

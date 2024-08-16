@@ -1,9 +1,16 @@
 from django import forms
 from .models import Servicios, Filiales, Unidades, Infra, Actividad
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 
 # FORMULARIO PARA CARGAR INFRAESTRUCTURA
 class InfraUploadForm(forms.Form):
-    file = forms.FileField()
+    file = forms.FileField(label="Selecciona el archivo que deseas cargar", required=False)
+    def __init__(self, *args, **kwargs):
+        super(InfraUploadForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.add_input(Submit('submit', 'Cargar Archivo'))
 
 # FORMULARIO PARA CARGAR SERVICIOS
 class ServiciosUploadForm(forms.Form):

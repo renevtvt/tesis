@@ -10,6 +10,6 @@
   {% endif %}
   <form method="post">{% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Eliminar</button>
+    <button type="submit" class="btn btn-danger">Eliminar</button>
   </form>
 {% endblock content %}

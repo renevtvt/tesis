@@ -9,7 +9,7 @@
     <h1>Carga de Actividad</h1>
     <form method="post" enctype="multipart/form-data">{% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Subir</button>
+        <button type="submit" class="btn btn-primary">Subir</button>
         {% if messages %}
         <div class="messages">
             {% for message in messages %}
