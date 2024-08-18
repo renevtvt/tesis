@@ -1,8 +1,10 @@
 {% load i18n %}
 {% load allauth %}
 {% load socialaccount %}
+<!-- este es el link -->
 {% get_providers as socialaccount_providers %}
 {% if socialaccount_providers %}
+
     {% if not SOCIALACCOUNT_ONLY %}
         {% element hr %}
         {% endelement %}
@@ -10,6 +12,8 @@
             {% translate "Or use a third-party" %}
         {% endelement %}
     {% endif %}
+   
     {% include "socialaccount/snippets/provider_list.html" with process="login" %}
     {% include "socialaccount/snippets/login_extra.html" %}
+
 {% endif %}

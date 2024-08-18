@@ -1,25 +1,56 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block titulo %} Red ChileSalud {% endblock titulo %}
 
 {% block content %}
+<div class="container my-3">
+    <div class="row text-center">
+        <h1>Gestión de Infraestructura y Actividades de Clínicas</h1>
+    </div>
 
-    <h1>Bienvenido a la gestión de Infraestructura y actividad Clínicas ChileSalud</h1>
-    <nav>
-        <ul>
-            <li><a href="{% url 'infra_app:carga_infra' %}">Cargar infraestructura</a></li>
-            <li><a href="{% url 'infra_app:infra_lista' %}">Visualizar infraestructura</a></li>
-            <li><a href="{% url 'infra_app:infra_list_update' %}">Actualizar infraestructura</a></li>
-            <li><a href="{% url 'infra_app:delete_infra' %}">Borrar infraestructura</a></li>
-            <li><a href="{% url 'infra_app:carga_actividad' %}">Cargar actividad</a></li>
-            <li><a href="{% url 'infra_app:actividad_lista' %}">Visualizar actividad</a></li>
-            <li><a href="{% url 'infra_app:actividad_lista_update' %}">Actualizar actividad</a></li>
-            <li><a href="{% url 'infra_app:delete_actividad' %}">Borrar actividad</a></li>
-            <li><a href="{% url 'infra_app:carga_servicios' %}">Cargar servicios</a></li>
-            <li><a href="{% url 'infra_app:carga_unidades' %}">Cargar unidades</a></li>
-            <li><a href="{% url 'infra_app:reporte_activos' %}">Reporte activos promedio por mes</a></li>
-            <li><a href="{% url 'infra_app:reporte_productividad' %}">Reporte productividad</a></li>
-        </ul>
-    </nav>
+    <div class="row my-3">
+        <div class="col-md-3">
+            <div class="card" style="width: 18rem;">
+                <img src="{% static 'img/resonador.jpg' %}" class="card-img-top" alt="...">
+                <div class="card-body">
+                <h5 class="card-title">Gestión Infraestructura</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                <li class="list-group-item"><a href="{% url 'infra_app:infra_lista' %}">Consultar Infraestructura</a></li>
+                <li class="list-group-item"><a href="{% url 'infra_app:carga_infra' %}">Cargar Infraestructura</a></li>
+                <li class="list-group-item"><a href="{% url 'infra_app:infra_list_update' %}">Actualizar Infraestructura</a></li>
+                <li class="list-group-item"><a href="{% url 'infra_app:delete_infra' %}">Eliminar Infraestructura</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card" style="width: 18rem;">
+                <img src="{% static 'img/actividad.jpg' %}" class="card-img-top" alt="...">
+                <div class="card-body">
+                <h5 class="card-title">Gestión Actividad</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                <li class="list-group-item"><a href="{% url 'infra_app:actividad_lista' %}">Consultar Actividad</a></li>
+                <li class="list-group-item"><a href="{% url 'infra_app:carga_actividad' %}">Cargar Actividad</a></li>
+                <li class="list-group-item"><a href="{% url 'infra_app:actividad_lista_update' %}">Actualizar Actividad</a></li>
+                <li class="list-group-item"><a href="{% url 'infra_app:delete_actividad' %}">Eliminar Actividad</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card" style="width: 18rem;">
+                <img src="{% static 'img/logo.png' %}" class="card-img-top" alt="...">
+                <div class="card-body">
+                <h5 class="card-title">Reportes</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                <li class="list-group-item"><a href="{% url 'infra_app:reporte_activos' %}">Reporte Activos</a></li>
+                <li class="list-group-item"><a href="{% url 'infra_app:reporte_productividad' %}">Reporte Productividad</a></li>
+                </ul>
+            </div>
+        </div>          
+    </div>
+</div>    
 {% endblock content %}
 

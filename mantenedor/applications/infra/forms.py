@@ -4,10 +4,10 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
 # FORMULARIO PARA CARGAR INFRAESTRUCTURA
-class InfraUploadForm(forms.Form):
-    file = forms.FileField(label="Selecciona el archivo que deseas cargar", required=False)
+class UploadForm(forms.Form):
+    file = forms.FileField(label="Selecciona el archivo que deseas cargar", required=True)
     def __init__(self, *args, **kwargs):
-        super(InfraUploadForm, self).__init__(*args, **kwargs)
+        super(UploadForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Cargar Archivo'))
@@ -19,6 +19,10 @@ class ServiciosUploadForm(forms.Form):
 # FORMULARIO PARA CARGAR UNIDADES
 class UnidadesUploadForm(forms.Form):
     file = forms.FileField()
+
+# FORMULARIO PARA CARGAR UNIDADES
+class ActividadUploadForm(forms.Form):
+    file = forms.FileField()    
 
 # FORMULARIO PARA BORRAR INFRAESTRUCTURA
 class DeleteInfraForm(forms.Form):

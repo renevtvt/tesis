@@ -1,15 +1,21 @@
 <header class="header">
-        <div class="">
-            <a href="{% url 'infra_app:inicio' %}" style="font-size: 25px; color: white;">
-                Red de Clínicas ChileSalud
-            </a>
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <a href="{% url 'infra_app:home' %}" style="font-size: 25px; color: white;">
+                    Red de Clínicas ChileSalud
+                </a>
+            </div>
+            <div class="d-flex align-items-center">
+                {% if user.is_authenticated %}
+                    <span style="color: white;">
+                        {{ user.email }}
+                    </span>
+                    <a href="{% url 'account_logout' %}" style="color: white; margin-left: 15px;">
+                        Cerrar sesión
+                    </a>
+                {% endif %}
+            </div>
         </div>
-        <div class="">
-            
-        </div>
-        <div class="">
-            <ul class="menu">
-
-            </ul>
-        </div>
+    </div>
 </header>

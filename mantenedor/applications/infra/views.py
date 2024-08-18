@@ -4,11 +4,13 @@ from django.views.generic import TemplateView, FormView, ListView, UpdateView, V
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.db import transaction, IntegrityError
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from io import StringIO
 from .forms import *
 from .models import Infra, Filiales, Servicios, Unidades, Actividad
 from .utils import *
+from .mixins import *
 
 
 # Vista que carga la página de inicio
@@ -16,12 +18,14 @@ class InicioView(TemplateView):
     """vista que carga la pagina de inicio"""
     template_name="inicio.html"
 
-# Vista que carga el csv de Infra
-class cargaCsvInfra(FormView):
+# Vista que carga el csv de Infra 
+class cargaCsvInfra(PerfilAutorizadoMixin, FormView):
     template_name = "infra/carga_infra.html"
-    form_class = InfraUploadForm
+    form_class = UploadForm
     success_url = reverse_lazy("infra_app:carga_infra")
-    
+    grupos_permitidos = ["admin"]
+ 
+  
     def form_valid(self, form):
         # función para el manejo de errores
 
@@ -94,10 +98,11 @@ class cargaCsvInfra(FormView):
         return super().form_valid(form)
     
 # Vista para cargar el CSV de servicios    
-class cargaCsvServicios(FormView):
+class cargaCsvServicios(PerfilAutorizadoMixin, FormView):
     template_name = "infra/carga_servicios.html"
-    form_class = InfraUploadForm
+    form_class = UploadForm
     success_url = reverse_lazy("infra_app:carga_servicios")
+
     
     def form_valid(self, form):
         file = form.cleaned_data["file"]
@@ -133,9 +138,9 @@ class cargaCsvServicios(FormView):
         return super().form_valid(form)
 
 # Vista para cargar el CSV de unidades 
-class cargaCsvUnidades(FormView):
+class cargaCsvUnidades(PerfilAutorizadoMixin, FormView):
     template_name = "infra/carga_unidades.html"
-    form_class = UnidadesUploadForm
+    form_class = UploadForm
     success_url = reverse_lazy("infra_app:carga_unidades")
     
     def form_valid(self, form):
@@ -177,10 +182,11 @@ class cargaCsvUnidades(FormView):
  
         return super().form_valid(form)
 
-class cargaCsvActividad(FormView):
+class cargaCsvActividad(PerfilAutorizadoMixin, FormView):
     template_name = "infra/carga_actividad.html"
-    form_class = UnidadesUploadForm
+    form_class = UploadForm
     success_url = reverse_lazy("infra_app:carga_actividad")
+    grupos_permitidos = ["admin"]
     
     def form_valid(self, form):
 
@@ -229,9 +235,10 @@ class cargaCsvActividad(FormView):
  
         return super().form_valid(form)   
 
-class DeleteInfraView(View):
+class DeleteInfraView(PerfilAutorizadoMixin, View):
     form_class = DeleteInfraForm
     template_name = 'infra/delete_infra.html'
+    grupos_permitidos = ["admin"]
     
     def get(self, request):
         form = self.form_class()
@@ -255,9 +262,10 @@ class DeleteInfraView(View):
             
         return render(request, self.template_name, {'form': form, 'message': message})
 
-class DeleteActividadView(View):
+class DeleteActividadView(PerfilAutorizadoMixin, View):
     form_class = DeleteActividadForm
     template_name = 'infra/delete_actividad.html'
+    grupos_permitidos = ["admin"]
     
     def get(self, request):
         form = self.form_class()
@@ -281,17 +289,19 @@ class DeleteActividadView(View):
             
         return render(request, self.template_name, {'form': form, 'message': message})
     
-class ActividadListView(ListView):
+class ActividadListView(PerfilAutorizadoMixin, ListView):
     template_name = "infra/actividad_lista.html"
     context_object_name = "actividad_lista"
+    grupos_permitidos = ["lector", "admin"]
 
     def get_queryset(self):
         actividad = Actividad.objects.listar_actividad()
         return actividad
     
-class ActividadListViewUpdate(ListView):
+class ActividadListViewUpdate(PerfilAutorizadoMixin, ListView):
     template_name = "infra/actividad_lista_update.html"
     context_object_name = "actividad_lista_update"
+    grupos_permitidos = ["admin"]
 
     def get_queryset(self):
         form = ActividadFilterUpdateForm(self.request.GET)
@@ -315,10 +325,11 @@ class ActividadListViewUpdate(ListView):
         self.request.session['filtros'] = self.request.GET
         return context
     
-class ActividadUpdateView(UpdateView):
+class ActividadUpdateView(PerfilAutorizadoMixin, UpdateView):
     model = Actividad
     form_class = ActividadUpdateForm
     template_name = "infra/actividad_update.html"
+    grupos_permitidos = ["admin"]
 
     
     def get_success_url(self):
@@ -327,9 +338,10 @@ class ActividadUpdateView(UpdateView):
         return reverse('infra_app:actividad_lista_update') + '?' + urllib.parse.urlencode(filtros)          
 
 
-class InfraListView(ListView):
+class InfraListView(PerfilAutorizadoMixin, ListView):
     template_name = "infra/infra_lista.html"
     context_object_name = "infra_vista"
+    grupos_permitidos = ["admin", "lector"]
 
     def get_queryset(self):
         form = InfraFilterForm(self.request.GET)
@@ -354,9 +366,10 @@ class InfraListView(ListView):
         return context
       
     
-class InfraListViewUpdate(ListView):
+class InfraListViewUpdate(PerfilAutorizadoMixin, ListView):
     template_name = "infra/infra_lista_update.html"
     context_object_name = "infra_lista_update"
+    grupos_permitidos = ["admin"]
 
     def get_queryset(self):
         form = InfraFilterUpdateForm(self.request.GET)
@@ -385,10 +398,11 @@ class InfraListViewUpdate(ListView):
         return context
     
 
-class InfraUpdateView(UpdateView):
+class InfraUpdateView(PerfilAutorizadoMixin, UpdateView):
     model = Infra
     form_class = InfraUpdateForm
     template_name = "infra/infra_update.html"
+    grupos_permitidos = ["admin"]
 
     def form_valid(self, form):
         try:
@@ -406,17 +420,19 @@ class InfraUpdateView(UpdateView):
         filtros = self.request.session.get('filtros', {})
         return reverse('infra_app:infra_list_update') + '?' + urllib.parse.urlencode(filtros) 
     
-class ReporteActivos(ListView):
+class ReporteActivos(PerfilAutorizadoMixin, ListView):
     template_name = 'infra/reporte_activos.html'
     context_object_name = 'reporte_activos'
+    grupos_permitidos = ["admin", "lector"]
 
     def get_queryset(self):
         activos = Infra.objects.promedio_simple_activos_por_mes()
         return activos
     
-class ReporteProductividad(ListView):
+class ReporteProductividad(PerfilAutorizadoMixin, ListView):
     template_name = 'infra/reporte_productividad.html'
     context_object_name = 'reporte_productividad'
+    grupos_permitidos = ["admin", "lector"]
 
     def get_queryset(self):
         productividad = Infra.objects.productividad()

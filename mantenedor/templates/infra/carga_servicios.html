@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-{% load  static %}
+{% load static %}
+{% load crispy_forms_tags %}
 
 {% block titulo %} Servicios {% endblock titulo %}
 
@@ -7,7 +8,7 @@
 {% block content %} 
     <h1>Carga de Servicios</h1>
     <form method="post" enctype="multipart/form-data">{% csrf_token %}
-        {{ form.as_p }}
+        {{ form|crispy }}
         <button type="submit">Subir</button>
         {% if messages %}
         <div class="messages">

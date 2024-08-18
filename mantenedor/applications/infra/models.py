@@ -103,4 +103,10 @@ class Infra(models.Model):
     def __str__(self):
         return f"{self.id_filial}_{self.ejercicio}_{self.mes}_{self.hora}_{self.id_unidad}"
     
+class Users(models.Model):
+    email = models.EmailField(unique=True)
+
+    def __str__(self):
+        return self.email
+    
 

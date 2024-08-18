@@ -1,6 +1,7 @@
 from django.contrib import messages
 from decimal import Decimal, InvalidOperation
 
+
 def parse_int(value, field_name):
     try:
         return int(value.strip())
@@ -36,3 +37,4 @@ def validacion_negocio(disponible, habilitado, instalado):
         raise ValueError(f"Infraestructura habilitada no puede ser mayor que infraestructura instalada")
 
 unidades_porcentaje = ["MQ Adulto", "UCI", "UTI"]
+

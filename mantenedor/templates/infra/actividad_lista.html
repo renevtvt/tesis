@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load humanize %}
 
+{% load custom_filters %}
 
 {% block titulo %} Actividad {% endblock titulo %}
 
@@ -37,7 +37,7 @@
                             {% if filial not in "id_unidad__id_servicio__nombre_servicio id_unidad__nombre_unidad ejercicio mes" %}
                                 <td>
                                     {% if cantidad != '-' %}                              
-                                        {{ cantidad|floatformat:0|intcomma }}
+                                        {{ cantidad|intcomma_custom }}
                                     {% else %}
                                         {{ cantidad }}   
                                     {% endif %}    
