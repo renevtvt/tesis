@@ -1,75 +1,71 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block titulo %} Actualizar Infraestructura {% endblock titulo %}
 
 {% block content %}
-<div class="container">
-    <h1 class="text-center">Actualizar Infraestructura</h1>
-        <form method="get" class="col-md-12">{% csrf_token %}
-            <div class="form-row d-flex align-items-center justify-content-start">
-                <div class="form-group mx-1">
-                    {{ form.filial.label_tag }}
-                    {{ form.filial }}
+    <div class="container text-center">
+        <h1 class="text-center">Actualizar Infraestructura</h1>
+            <form method="get" class="col-md-12 mb-0">{% csrf_token %}
+                <div class="form-row d-flex align-items-center justify-content-center">
+                    <div class="form-group mx-1">
+                        {{ form.filial|as_crispy_field }}
+                    </div>    
+                    <div class="form-group mx-1">
+                        {{ form.ejercicio|as_crispy_field }}
+                    </div>    
+                    <div class="form-group mx-1">
+                        {{ form.mes|as_crispy_field }}
+                    </div>
+                    <div class="form-group mx-1">
+                        {{ form.dia|as_crispy_field }}
+                    </div>
+                    <div class="form-group mx-1">
+                        {{ form.unidad|as_crispy_field }}
+                    </div>
+                    <div class="form-group mx-1" style="margin-bottom: -0.9rem;">
+                        <button type="submit" class="btn btn-primary">Buscar</button>
+                    </div>
                 </div>    
-                <div class="form-group mx-1">
-                    {{ form.ejercicio.label_tag }}
-                    {{ form.ejercicio }}
-                </div>    
-                <div class="form-group mx-1">
-                    {{ form.mes.label_tag }}
-                    {{ form.mes }}
-                </div>
-                <div class="form-group mx-1">
-                    {{ form.dia.label_tag }}
-                    {{ form.dia }}
-                </div>
-                <div class="form-group mx-1">
-                    {{ form.unidad.label_tag }}
-                    {{ form.unidad }}
-                </div>
-                <div class="form-group mx-1 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary">Buscar</button>
-                </div>
-            </div>    
-        </form>
-    {% if infra_lista_update %}
-    <div class="table-responsive" style="height: 80vh">
-        <table class="table table-bordered table-striped text-center align-middle">
-            <thead class="sticky-header">
-                <tr>
-                    <th>Filial</th>
-                    <th>Ejercicio</th>
-                    <th>Mes</th>
-                    <th>Día</th>
-                    <th>Hora</th>
-                    <th>Unidad</th>
-                    <th>Disponible</th>
-                    <th>Habilitado</th>
-                    <th>Instalado</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for i in infra_lista_update %}
+            </form>
+        {% if infra_lista_update %}
+        <div class="table-responsive" style="height: 79vh">
+            <table class="table table-bordered table-striped text-center align-middle">
+                <thead class="sticky-header">
                     <tr>
-                        <td>{{ i.id_filial__nombre_filial }}</td>
-                        <td>{{ i.ejercicio }}</td>
-                        <td>{{ i.mes }}</td>
-                        <td>{{ i.dia }}</td>
-                        <td>{{ i.hora }}</td>
-                        <td>{{ i.id_unidad__nombre_unidad }}</td>
-                        <td>{{ i.disponible|floatformat:1 }}</td>
-                        <td>{{ i.habilitado|floatformat:1 }}</td>
-                        <td>{{ i.instalado|floatformat:1 }}</td>
-                        <td>
-                                <a href="{% url 'infra_app:infra_update' pk=i.id %}">Actualizar</a>                                                       
-                        </td>
+                        <th>Filial</th>
+                        <th>Ejercicio</th>
+                        <th>Mes</th>
+                        <th>Día</th>
+                        <th>Hora</th>
+                        <th>Unidad</th>
+                        <th>Disponible</th>
+                        <th>Habilitado</th>
+                        <th>Instalado</th>
+                        <th>Acción</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% endif %}
-</div>    
+                </thead>
+                <tbody>
+                    {% for i in infra_lista_update %}
+                        <tr>
+                            <td>{{ i.id_filial__nombre_filial }}</td>
+                            <td>{{ i.ejercicio }}</td>
+                            <td>{{ i.mes }}</td>
+                            <td>{{ i.dia }}</td>
+                            <td>{{ i.hora }}</td>
+                            <td>{{ i.id_unidad__nombre_unidad }}</td>
+                            <td>{{ i.disponible|floatformat:1 }}</td>
+                            <td>{{ i.habilitado|floatformat:1 }}</td>
+                            <td>{{ i.instalado|floatformat:1 }}</td>
+                            <td>
+                                    <a href="{% url 'infra_app:infra_update' pk=i.id %}">Actualizar</a>                                                       
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>    
 {% endblock content %}

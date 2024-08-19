@@ -89,7 +89,7 @@ class cargaCsvInfra(PerfilAutorizadoMixin, FormView):
         try:
             with transaction.atomic():                      
                 Infra.objects.bulk_create(data)
-            messages.success(self.request, "Archivo cargado correctamente en la base de datos")    
+            messages.success(self.request, "Archivo cargado correctamente en la base de datos", extra_tags="infra")    
         except IntegrityError as e:
              mensaje = str(e.__cause__)
              index_msg = str(e.__cause__).find(":")
@@ -174,7 +174,7 @@ class cargaCsvUnidades(PerfilAutorizadoMixin, FormView):
 
         try:                  
             Unidades.objects.bulk_create(data)
-            messages.success(self.request, "Archivo cargado correctamente en la base de datos")
+            messages.success(self.request, "Archivo cargado correctamente en la base de datos", extra_tags="infra")
         except IntegrityError as e:
              mensaje = str(e.__cause__)
              index_msg = str(e.__cause__).find(":")
@@ -227,7 +227,7 @@ class cargaCsvActividad(PerfilAutorizadoMixin, FormView):
 
         try:                  
             Actividad.objects.bulk_create(data)
-            messages.success(self.request, "Archivo cargado correctamente en la base de datos")
+            messages.success(self.request, "Archivo cargado correctamente en la base de datos", extra_tags="infra")
         except IntegrityError as e:
              mensaje = str(e.__cause__)
              index_msg = str(e.__cause__).find(":")

@@ -1,37 +1,34 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% load crispy_forms_tags %}
+
 {% block titulo %} Lista Infraestructura {% endblock titulo %}
 
 {% block content %}
-    <div class="container-fluid">
+    <div class="container-fluid text-center">
         <h1 class="text-center">Lista Infraestructura</h1>
-            <form method="get">{% csrf_token %}
-                <div class="form-row d-flex align-items-center justify-content-start">
+            <form method="get" class="mb-0">{% csrf_token %}
+                <div class="form-row d-flex align-items-center justify-content-center">
                     <div class="form-group mx-1">
-                        {{ form.filial.label_tag }}
-                        {{ form.filial }}
+                        {{ form.filial|as_crispy_field }}
                     </div>
                     <div class="form-group mx-1">
-                        {{ form.ejercicio.label_tag }}
-                        {{ form.ejercicio }}
+                        {{ form.ejercicio|as_crispy_field }}
                     </div>
                     <div class="form-group mx-1">
-                        {{ form.mes.label_tag }}
-                        {{ form.mes }}
+                        {{ form.mes|as_crispy_field }}
                     </div>
                     <div class="form-group mx-1">
-                        {{ form.dia.label_tag }}
-                        {{ form.dia }}
+                        {{ form.dia|as_crispy_field }}
                     </div>
                     <div class="form-group mx-1 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary">Buscar</button>
                     </div>
                 </div>
-            </form>
-            
+            </form>   
         {% if infra_vista %}
-            <div class="table-responsive" style="height: 82vh">
+            <div class="table-responsive" style="height: 79vh">
                 <table class="table table-bordered table-striped text-center align-middle">
                     <thead class="sticky-header">
                         <tr>

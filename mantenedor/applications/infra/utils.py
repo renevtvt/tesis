@@ -15,7 +15,7 @@ def parse_decimal(value, field_name):
         raise ValueError(f"El tipo de dato recibido en el campo {field_name} no es un valor válido: '{value}'")    
 
 def msg_error(request, view, form, message):
-    messages.error(request, message)
+    messages.error(request, message, extra_tags="infra")
     return view.form_invalid(form)
 
 def validar_mes(mes):
