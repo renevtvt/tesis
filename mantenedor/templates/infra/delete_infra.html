@@ -6,12 +6,9 @@
 
 {% block content %}
 
-  <div class="container">
+  <div class="container my-1">
     <h1 class="text-center">Eliminar Infraestructura</h1>
     <div class="row">
-        {% if message %}
-          <p>{{ message }}</p>
-        {% endif %}
         <form method="post" class="col-md-12">{% csrf_token %}
           <div class="form-row d-flex align-items-center justify-content-center">
             <div class="form-group mx-1">
@@ -23,9 +20,14 @@
             <div class="form-group mx-1">
               {{ form.mes|as_crispy_field }}
             </div>
-          <button type="submit" class="btn btn-danger">Eliminar</button>
+          <button type="submit" class="btn btn-danger" style="margin-bottom: -0.9rem;">Eliminar</button>
         </div>  
         </form>
+      {% if message %}
+      <div class="d-flex justify-content-center">
+        <p>{{ message }}</p>
+      </div>
+      {% endif %}
     </div>
   </div>  
    

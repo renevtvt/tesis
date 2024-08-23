@@ -7,22 +7,28 @@
 
 <!-- upload_csv.html -->
 {% block content %} 
-    <h1>Carga de Actividad</h1>
-    <form method="post" enctype="multipart/form-data">{% csrf_token %}
-        {{ form|crispy }}
-        <button type="submit" class="btn btn-primary">Subir</button>
-        {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-                {% if "infra" in message.tags %}
-                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-                        {{ message }}
-                    </div>
+<div class="container-fluid my-1">
+<h1>Carga de Actividad</h1>    
+    <div class="row">
+        <div class="col-md-3">    
+            <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-primary">Subir</button>
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        {% if "infra" in message.tags %}
+                            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
                 {% endif %}
-            {% endfor %}
-        </div>
-        {% endif %}
-    </form>
+            </form>
+        </div>    
+    </div>    
+</div>    
     <script>
         document.querySelector('input[type="file"]').addEventListener('change', function(event) {
             var fileInput = event.target;

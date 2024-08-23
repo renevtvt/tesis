@@ -6,7 +6,7 @@
 {% block titulo %} Lista Infraestructura {% endblock titulo %}
 
 {% block content %}
-    <div class="container-fluid text-center">
+    <div class="container-fluid text-center my-1">
         <h1 class="text-center">Lista Infraestructura</h1>
             <form method="get" class="mb-0">{% csrf_token %}
                 <div class="form-row d-flex align-items-center justify-content-center">
@@ -23,12 +23,12 @@
                         {{ form.dia|as_crispy_field }}
                     </div>
                     <div class="form-group mx-1 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary">Buscar</button>
+                        <button type="submit" class="btn btn-primary" style="margin-bottom: -0.9rem;">Buscar</button>
                     </div>
                 </div>
             </form>   
         {% if infra_vista %}
-            <div class="table-responsive" style="height: 79vh">
+            <div class="table-responsive" style="height: 78vh">
                 <table class="table table-bordered table-striped text-center align-middle">
                     <thead class="sticky-header">
                         <tr>

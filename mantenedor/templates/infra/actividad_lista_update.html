@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load humanize %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}
 
 {% block titulo %} Actualizar Actividad {% endblock titulo %}
 
@@ -8,20 +9,18 @@
     <div class="container">
         <h1 class="text-center">Actualizar Actividad</h1>
             <form method="get" class="col-md-12">{% csrf_token %}
-                <div class="form-row d-flex align-items-center justify-content-start">
+                <div class="form-row d-flex align-items-center justify-content-center">
                     <div class="form-group mx-1">
-                        {{ form.filial.label_tag }}
-                        {{ form.filial }}
+                        {{ form.filial|as_crispy_field }}
                     </div>
                     <div class="form-group mx-1">
-                        {{ form.ejercicio.label_tag }}
-                        {{ form.ejercicio }}
+                        {{ form.ejercicio|as_crispy_field }}
+
                     </div>
                     <div class="form-group mx-1">
-                        {{ form.unidad.label_tag }}
-                        {{ form.unidad }}
+                        {{ form.unidad|as_crispy_field }}
                     </div>
-                    <div class="form-group mx-1 d-flex align-items-end">
+                    <div class="form-group mx-1" style="margin-bottom: -0.9rem;">
                         <button type="submit" class="btn btn-primary">Buscar</button>
                     </div>
                 </div>       
@@ -47,7 +46,7 @@
                                 <td>{{ i.ejercicio }}</td>
                                 <td>{{ i.mes }}</td>
                                 <td>{{ i.id_unidad__nombre_unidad }}</td>
-                                <td>{{ i.cantidad|floatformat:0|intcomma }}</td>
+                                <td>{{ i.cantidad|intcomma_custom }}</td>
                                 <td>
                                     <a href="{% url 'infra_app:actividad_update' pk=i.id %}">Actualizar</a>                                                       
                                 </td>
