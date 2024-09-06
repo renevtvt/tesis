@@ -56,9 +56,9 @@ class cargaCsvInfra(PerfilAutorizadoMixin, FormView):
 
                 # validación de negocio
                 if disponible_csv > habilitado_csv:
-                    raise ValueError(f"Error en la fila {reader.line_num}: Infraestructura disponible no puede ser mayor que infraestructura habilitada")
+                    raise ValueError(f"Infraestructura disponible no puede ser mayor que infraestructura habilitada")
                 if habilitado_csv > instalado_csv:
-                    raise ValueError(f"Error en la fila {reader.line_num}: Infraestructura habilitada no puede ser mayor que infraestructura instalada")
+                    raise ValueError(f"Infraestructura habilitada no puede ser mayor que infraestructura instalada")
                 
                 infra_instance = Infra(
                     # en esta linea se puede gatillar la excepción de que id filial no existe
@@ -83,7 +83,7 @@ class cargaCsvInfra(PerfilAutorizadoMixin, FormView):
             except Unidades.DoesNotExist:
                 return msg_error(self.request, self, form, f"Error en la fila {reader.line_num}: El id_unidad ingresado no existe")  
             except Exception as e:
-                return msg_error(self.request, self, form, f"Error en la fila {reader.line_num}: La carga ha presentado un error: {e}")            
+                return msg_error(self.request, self, form, f"Error en la fila {reader.line_num}: {e}")            
         
         # Inserción a la base de datos
         try:
@@ -288,7 +288,8 @@ class DeleteActividadView(PerfilAutorizadoMixin, View):
             message = "Los registros que intentas eliminar no existen"
             
         return render(request, self.template_name, {'form': form, 'message': message})
-    
+
+# Vista que permite visualizar la actividad de las filiales    
 class ActividadListView(PerfilAutorizadoMixin, ListView):
     template_name = "infra/actividad_lista.html"
     context_object_name = "actividad_lista"
